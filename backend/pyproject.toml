@@ -1,0 +1,16 @@
+[project]
+name = "aero_doc_assistant_server"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[all]",
+    "sqlalchemy",
+    "sqlalchemy-utils",
+    "passlib[bcrypt]",
+    "cryptography",
+    "psycopg2-binary",
+    "asyncpg",
+    "uuid-utils",
+    "openai",
+]

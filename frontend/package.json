@@ -10,8 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "errorhandler": "^1.5.1",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-error-boundary": "^6.0.0",
+    "react-router": "^7.10.1",
+    "react-router-dom": "^7.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

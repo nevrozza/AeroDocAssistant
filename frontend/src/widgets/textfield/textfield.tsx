@@ -1,7 +1,7 @@
 import type { Icon } from "../utils/icon";
 import "./textfield.css"
 import {colors, IconButton} from "../../widgets"
-import type { FC, PropsWithChildren } from "react";
+import { useState, type FC } from "react";
 
 interface TextFieldProps {
     value?: string;
@@ -10,13 +10,17 @@ interface TextFieldProps {
     onTrailingIconClick?: () => void;
 }
 
-const TextField: FC<PropsWithChildren<TextFieldProps>> = (props: TextFieldProps) => {
+const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
+
+    const [value, setValue] = useState<string>(props.value || "")
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        props.onChange?.(e.target.value)
+        setValue(e.target.value)
     };
     return (
         <div className="textbox-container" style={{backgroundColor: colors.containerHigh}}>
             <input 
+                value={value}
                 placeholder="Введите запрос" 
                 className="textbox"
                 onChange={handleChange}

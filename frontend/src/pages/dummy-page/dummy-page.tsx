@@ -13,7 +13,7 @@ const DummyPage: FC<DummyPageProps> = ({count}) => {
     return <div>
         <h1>Dummy+{count}</h1>
         <ThemeButton/>
-        <TextField trailingIcon={LuSunMoon}></TextField>
+        <TextField trailingIcon={LuSunMoon} value="123"></TextField>
     </div>;
 };
 

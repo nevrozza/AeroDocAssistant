@@ -1,23 +1,24 @@
-import type {CSSProperties, FC} from "react";
-import * as React from "react";
+import type {FC} from "react";
 
 import "./icon-button.css"
-import {colors} from "../../widgets"
+import {colors, type Icon} from "../../widgets"
 
 
 interface IconButtonProps {
     radius?: number,
     iconColor?: string,
     containerColor?: string,
+    opacity?: number,
     onClick?: () => void,
-    icon: React.ComponentType<{ style?: CSSProperties, size?: string | number; color?: string; }>;
+    icon: Icon;
 }
 
 const IconButton: FC<IconButtonProps>
     = ({
            radius = 60,
-           iconColor = colors.primary,
+           iconColor = colors.onBackground,
            containerColor = colors.containerHigh,
+           opacity = iconColor !== colors.onBackground ? 1 : .7,
            onClick = () => null,
            icon: Icon
        }) => {
@@ -32,8 +33,7 @@ const IconButton: FC<IconButtonProps>
                 {
                     height: iconSize, width:
                     iconSize,
-                    opacity:
-                        (iconColor !== colors.onBackground ? "100%" : "70%")
+                    opacity: opacity,
                 }
             }
             color={iconColor}

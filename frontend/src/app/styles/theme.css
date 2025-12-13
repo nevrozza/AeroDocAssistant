@@ -1,9 +1,9 @@
 * {
   transition:
-          color calc(300ms * var(--enable-theme-transitions)),
-          background-color calc(300ms * var(--enable-theme-transitions)),
-          border-color calc(300ms * var(--enable-theme-transitions)),
-          box-shadow calc(300ms * var(--enable-theme-transitions));
+          color calc(600ms * var(--enable-theme-transitions)),
+          background-color calc(600ms * var(--enable-theme-transitions)),
+          border-color calc(600ms * var(--enable-theme-transitions)),
+          box-shadow calc(600ms * var(--enable-theme-transitions));
 }
 
 html {

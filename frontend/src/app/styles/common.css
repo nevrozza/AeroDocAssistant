@@ -4,6 +4,7 @@
 
 .clickable {
     transition: transform 200ms;
+    cursor: pointer;
 }
 
 .clickable:active {

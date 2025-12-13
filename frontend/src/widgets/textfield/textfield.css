@@ -1,0 +1,36 @@
+.textbox-container{
+    display: flex;
+
+    height: 60px;
+    border: 0px;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    vertical-align: middle;
+}
+.textbox-container{
+    border-radius: 100px;
+    width: 300px;
+    background-color: black;
+}
+.textbox{
+    border: 0px;
+    outline: none;
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+    padding-left: 25px;
+    padding-right: 10px;
+    width: 215px;
+    outline: none;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    vertical-align: middle;
+}
+.trailing-icon{
+    display: flex;
+    align-items: center;
+}

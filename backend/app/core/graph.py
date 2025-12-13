@@ -1,24 +1,23 @@
 import asyncio
 from typing import Generator
 from dataclasses import dataclass
-from yandex_cloud_ml_sdk import AsyncYCloudML
-from yandex_cloud_ml_sdk._models.completions.model import AsyncGPTModel
 from langchain.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage, AnyMessage
 from langchain_core.documents.base import Document
+from langchain_community.chat_models import ChatYandexGPT
+from langchain_openai import ChatOpenAI
 
 from app.core import storage, config
 
-llm: AsyncGPTModel
+llm: ChatOpenAI
 
 
 def setup():
     global llm
-    sdk = AsyncYCloudML(
-        auth=config.API_KEY,
-        folder_id=config.FOLDER,
+    llm = ChatOpenAI(
+        base_url="https://llm.api.cloud.yandex.net/v1",
+        model=f"gpt://{config.FOLDER}/yandexgpt-lite",
+        api_key=config.API_KEY,
     )
-    model = sdk.models.completions("yandexgpt-lite")
-    llm = model.configure(max_tokens=50)
 
 
 @dataclass
@@ -44,25 +43,23 @@ def __context_to_message(context: list[Document]) -> AnyMessage:
 
 
 async def stream_llm_async(history: list[AnyMessage], context: list[Document]) -> Generator[LLMChunk, None, None]:
-    prev_text = ""
-    prev_tokens = 0
     history = [*history, __context_to_message(context)]
-    async for chunk in llm.run_stream([{"role": ROLES_MAP[m.type], "text": m.text} for m in history]):
-        text_delta = chunk.alternatives[0].text.lstrip(prev_text)
-        prev_text = chunk.alternatives[0].text
+    async for chunk in llm.astream(history, config={"max_tokens": 50}):
+        yield LLMChunk(chunk.text, (chunk.usage_metadata or {}).get("total_tokens", 0))
 
-        tokens_delta = chunk.usage.total_tokens - prev_tokens
-        prev_tokens = chunk.usage.total_tokens
-        yield LLMChunk(text_delta, tokens_delta)
+
+SETUP_INSTRUCTIONS = """
+Ты LLM помощник по технической документации в сфере авиастроения в ПАО Яковлев.
+Твоя задача - максимально экспертно отвечать сотрудникам на поставленные вопросы.
+Без воды, только факты и реальная помощь.
+"""
 
 
 async def main():
     storage.setup()
     setup()
 
-    history = [SystemMessage("Ты LLM помощник по технической документации в сфере авиастроения в ПАО Яковлев. "
-                             "Твоя задача - максимально экспертно отвечать сотрудникам на поставленные вопросы. "
-                             "Без воды, только факты и реальная помощь.")]
+    history = [SystemMessage(SETUP_INSTRUCTIONS)]
     while True:
         message = input(">>> ")
         history.append(HumanMessage(message))

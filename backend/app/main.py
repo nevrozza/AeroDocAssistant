@@ -16,13 +16,13 @@ async def main():
 
         print(f"\n({invocation.total_tokens} токенов)")
 
-        for doc_id in invocation.used_documents:
-            doc = invocation.retrieved_documents.get(doc_id, None)
-            if not doc:
-                print(f"Unretrieved used document: {doc_id}")
+        for frag_id in invocation.used_fragments:
+            frag = invocation.retrieved_fragments.get(frag_id, None)
+            if not frag:
+                print(f"Unretrieved used document: {frag_id}")
                 continue
 
-            print(f"Использовано: ```[doc:{doc_id}] {doc.metadata.get('title', '')}```")
+            print(f"Использовано: ```{frag.metadata.get('title', '')}```")
 
 
 if __name__ == '__main__':

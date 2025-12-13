@@ -1,0 +1,12 @@
+.hoverable:hover {
+    filter: brightness(85%);
+}
+
+.clickable {
+    transition: transform 200ms;
+}
+
+.clickable:active {
+    transform: scale(0.95);
+    filter: brightness(75%);
+}

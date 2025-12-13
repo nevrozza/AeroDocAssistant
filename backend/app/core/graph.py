@@ -5,6 +5,7 @@ from langchain.messages import HumanMessage, AIMessage, SystemMessage, ToolMessa
 from langchain_core.documents.base import Document
 from langchain_community.chat_models import ChatYandexGPT
 from langchain_openai import ChatOpenAI
+from langchain.tools import tool
 
 from app.core import storage, config
 
@@ -18,6 +19,8 @@ def setup():
         model=f"gpt://{config.FOLDER}/yandexgpt-lite",
         api_key=config.API_KEY,
     )
+
+    llm = llm.bind_tools([search_tool], tool_choice="auto")
 
 
 @dataclass
@@ -39,19 +42,57 @@ def __context_to_message(context: list[Document]) -> AnyMessage:
     for doc in context:
         rendered_docs.append(f"Документ: {doc.metadata.get("title", "")}\n{doc.page_content}")
 
-    return ToolMessage(f"Результат поиска в базе знаний: {'\n\n'.join(rendered_docs)}", tool_call_id=123)
+    return SystemMessage(f"Автоматически добавленный RAG контекст: {'\n\n'.join(rendered_docs)}\nЕсли информации недостаточно или она не подходит, то используй инструмент поиска. При использовании этих данных обязательно приводи и отдельно выделяй цитату.")
+
+
+@tool
+async def search_tool(query: str) -> str:
+    """Векторный поиск через embedding по векторной базе документов. Составляй запросы так, чтобы при векторизации было максимум совпадений с документами.
+    Результат не будет сохранен в истории чата. Процитируй нужные или использованые фрагменты из поиска в своем сообщении.
+    """
+    docs = await storage.search_async(query)
+
+    rendered = []
+    for doc in docs:
+        rendered.append(
+            f"Документ: {doc.metadata.get('title', '')}\n{doc.page_content}"
+        )
+
+    return "\n\n".join(rendered)
 
 
 async def stream_llm_async(history: list[AnyMessage], context: list[Document]) -> Generator[LLMChunk, None, None]:
     history = [*history, __context_to_message(context)]
-    async for chunk in llm.astream(history, config={"max_tokens": 50}):
-        yield LLMChunk(chunk.text, (chunk.usage_metadata or {}).get("total_tokens", 0))
+
+    response = await llm.ainvoke(history)
+
+    if response.tool_calls:
+        history.append(response)
+
+        for call in response.tool_calls:
+            if call["name"] == "search_tool":
+                tool_result = await search_tool.ainvoke(call["args"])
+                print(f"Invoked search with query {call["args"]}")
+
+                history.append(ToolMessage(content=tool_result, tool_call_id=call["id"]))
+
+        async for chunk in llm.astream(history, config={"max_tokens": 50}):
+            yield LLMChunk(
+                chunk.text,
+                (chunk.usage_metadata or {}).get("total_tokens", 0),
+            )
+    else:
+        yield LLMChunk(response.content, 0)
 
 
 SETUP_INSTRUCTIONS = """
 Ты LLM помощник по технической документации в сфере авиастроения в ПАО Яковлев.
-Твоя задача - максимально экспертно отвечать сотрудникам на поставленные вопросы.
-Без воды, только факты и реальная помощь.
+
+Правила:
+- если вопрос требует фактов, терминов, параметров, стандартов — используй инструмент поиска
+- не отвечай по памяти, если информация может быть в базе
+- отвечай кратко и технически точно
+- если используешь поиск, то обязательно приводи цитату.
 """
 
 

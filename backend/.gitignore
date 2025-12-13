@@ -1,6 +1,7 @@
 # Python
 uv.lock
 
+chroma/
 
 __pycache__/
 *.py[cod]

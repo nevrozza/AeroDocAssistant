@@ -7,6 +7,12 @@ import ErrorFallback, {router} from "./router.tsx";
 export default function App() {
     return (
         <StrictMode>
+            <button onClick={() => {
+                const html = document.querySelector('html');
+                html?.style.setProperty('color-scheme', 'light');
+            }}>Login
+                text
+            </button>
             <ErrorBoundary FallbackComponent={ErrorFallback} onError={(error) => console.error("ss" + error.message)}>
                 <RouterProvider router={router}/>
             </ErrorBoundary>

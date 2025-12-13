@@ -1,4 +1,6 @@
 export const colors = {
+    transparent: 'transparent',
+
     primary: 'var(--primary)',
     onPrimary: 'var(--on-primary)',
 

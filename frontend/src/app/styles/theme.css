@@ -13,6 +13,8 @@ html {
 
 
 html {
+
+
   /* workaround: skip initial animation (will be 1 after 100ms) */
   --enable-theme-transitions: 0;
   --primary: light-dark(var(--l-primary), var(--d-primary));

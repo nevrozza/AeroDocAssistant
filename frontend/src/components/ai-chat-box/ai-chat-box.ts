@@ -1,18 +1,23 @@
 import {StringUtils} from "../../shared";
+import {type RefObject, useRef} from "react";
 
 export interface AiChatBoxViewModel {
-    onSendClick: (text: string) => void,
+    onSendClick: () => void,
+    textFieldRef: RefObject<HTMLTextAreaElement | null>
 }
 
 const aiChatBox = (): AiChatBoxViewModel => {
 
-    const onSendClick = (text: string): void => {
+    const textFieldRef = useRef<HTMLTextAreaElement>(null);
+
+    const onSendClick = (): void => {
+        const text = textFieldRef.current?.value;
         if (StringUtils.isBlank(text)) {
             return;
         }
         console.log('onSendClick', text);
     }
 
-    return {onSendClick: onSendClick}
+    return {onSendClick: onSendClick, textFieldRef: textFieldRef}
 }
 export default aiChatBox

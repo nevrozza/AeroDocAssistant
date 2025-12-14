@@ -1,0 +1,22 @@
+.ai-chat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    width: 100%;
+    max-width: 600px; /* Ограничение максимальной ширины */
+    margin: 0 auto; /* Центрирование всего блока */
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.textfield-wrapper {
+    flex: 1; /* Поле ввода растягивается */
+    min-width: 0; /* Важно для правильного сжатия в flex контейнере */
+}

@@ -1,4 +1,6 @@
 import {setHtmlTheme} from './utils/update-html-theme.ts'
 import {StringUtils} from './utils/string-utils.ts'
 
-export {setHtmlTheme, StringUtils}
+import {useResize} from "./utils/use-resize.ts"
+
+export {setHtmlTheme, StringUtils, useResize}

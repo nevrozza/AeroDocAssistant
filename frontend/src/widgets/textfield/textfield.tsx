@@ -12,6 +12,7 @@ interface TextFieldProps {
     trailingIconHidable?: boolean;
     onTrailingIconClick?: () => void;
     placeholder?: string;
+    width?: number | string;
     minLines?: number;
     maxLines?: number;
 }
@@ -66,7 +67,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
     };
 
     return (
-        <div className="textbox-container" style={{backgroundColor: colors.containerHigh, borderRadius: borderRadius}}>
+        <div className="textbox-container" style={{backgroundColor: colors.containerHigh, borderRadius: borderRadius, width: props.width}}>
             <textarea
                 ref={props.ref}
                 placeholder={props.placeholder || "Введите запрос"}

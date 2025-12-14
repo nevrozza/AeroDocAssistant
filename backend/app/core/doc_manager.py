@@ -36,6 +36,9 @@ class DocumentManager:
     def get_by_id(self, doc_id: str) -> DocumentMetadata | None:
         return self.__documents.get(doc_id)
 
+    def get_abs_path(self, loca_path: Path) -> Path:
+        return self.__directory.joinpath(loca_path).resolve()
+
     def load(self):
         try:
             self.__load_index()

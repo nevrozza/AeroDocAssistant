@@ -4,11 +4,15 @@ from pydantic import BaseModel, UUID4
 from uuid import uuid4, UUID
 import traceback
 import json
+from langchain_core.documents.base import Document
+
+from app.core.llm_utils import LLMUtils
 
 
 class DocumentMetadata(BaseModel):
     doc_id: UUID4
     filepath: Path
+    title: str
 
 
 class _IndexSchema(BaseModel):
@@ -30,7 +34,7 @@ class DocumentManager:
         self.__directory = directory
         self.__documents = {}
 
-    def list(self) -> Generator[DocumentMetadata]:
+    def list_documents(self) -> Generator[DocumentMetadata]:
         yield from self.__documents.values()
 
     def get_by_id(self, doc_id: str) -> DocumentMetadata | None:
@@ -38,6 +42,13 @@ class DocumentManager:
 
     def get_abs_path(self, loca_path: Path) -> Path:
         return self.__directory.joinpath(loca_path).resolve()
+
+    async def update_metadata_async(self, metadata: DocumentMetadata, fragments: list[Document]):
+        title = await LLMUtils().get_doc_title_and_description_async(fragments)
+        metadata.title = title
+
+        self.__documents[metadata.doc_id] = metadata
+        self.__save_index()
 
     def load(self):
         try:

@@ -157,7 +157,7 @@ class PDFLoader:
 
         for i in range(len(result)):
             result[i].metadata = {
-                "source": metadata.doc_id,
+                "source": str(metadata.doc_id),
                 "fragment_id": i
             }
 

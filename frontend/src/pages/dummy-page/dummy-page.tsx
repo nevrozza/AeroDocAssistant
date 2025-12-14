@@ -2,7 +2,7 @@ import "./dummy-page.css"
 import {useRef, type FC} from "react";
 import {ThemeButton} from "../../components";
 import {IconButton, OutlinedButton, TextField} from "../../widgets";
-import {LuBrain, LuMic, LuSend} from "react-icons/lu";
+import {LuMic, LuSend, LuSlack} from "react-icons/lu";
 
 
 interface DummyPageProps {
@@ -15,9 +15,9 @@ const DummyPage: FC<DummyPageProps> = ({count}) => {
     return <div>
         <h1>Dummy+{count}</h1>
         <ThemeButton/>
-        <TextField trailingIcon={LuMic} ref={ref}></TextField>
-        <IconButton icon={LuSend} onClick={ () => console.log(ref.current?.value) }/>
-        <OutlinedButton text="Граф знаний" icon={LuBrain}></OutlinedButton>
+        <TextField trailingIcon={LuMic} ref={ref}/>
+        <IconButton icon={LuSend} onClick={() => console.log(ref.current?.value)}/>
+        <OutlinedButton text="Граф знаний" icon={LuSlack}/>
     </div>;
 };
 

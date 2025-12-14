@@ -1,21 +1,33 @@
-import { colors } from "../utils/colors";
-import type { Icon } from "../utils/icon";
+import {colors} from "../utils/colors";
+import type {Icon} from "../utils/icon";
 import "./outlined-button.css"
 
 interface OutlinedButtonProps {
     text: string;
-    icon: Icon;
+    containerColor?: string;
+    color?: string;
+    icon?: Icon;
     blury?: boolean;
     onClick?: () => void;
 }
 
-const OutlinedButton = (props: OutlinedButtonProps) => (
-    
-    <button className="button-container" onClick={props.onClick} style={{backgroundColor: colors.background, borderColor: colors.containerHigh}}>
-        <div className="icon">
-            <props.icon size={18}></props.icon>
-        </div>
-        {props.text}
+const OutlinedButton = ({
+                            text,
+                            containerColor = colors.background,
+                            color = colors.onBackground,
+                            icon: Icon,
+                            blury = false, // TODO
+                            onClick = () => null,
+                        }: OutlinedButtonProps) => (
+
+    <button className="button-container hoverable clickable"
+            onClick={onClick}
+            style={{backgroundColor: containerColor, color: color, borderColor: colors.containerHighest}}
+    >
+        {Icon && (
+            <Icon size={18}/>
+        )}
+        {text}
     </button>
 );
 

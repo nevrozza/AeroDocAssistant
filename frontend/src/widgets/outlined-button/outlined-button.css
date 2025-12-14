@@ -3,21 +3,20 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    column-gap: 5px;
+
+    column-gap: 8px;
     
     height: 32px;
-    width: 134px;
-    border: 1px solid;
+    width: fit-content;
+    padding: 6px 16px 6px 8px;
+
+    border: 1px solid var(--primary);
     border-radius: 16px;
     
-    font-weight: 500;
+    font-weight: 600;
     text-align: center;
     vertical-align: middle;
     font-size: 14px;
     line-height: 20px;
-    letter-spacing: 0.1px;
-}
-.icon{
-    height: 18px;
-    width: 18px;
+    letter-spacing: 0;
 }

@@ -1,19 +1,26 @@
 import asyncio
 
-from app.core import chat, storage, config
+from app.core import chat, search, config
 from app.core.doc_manager import DocumentManager
 
 
 async def main():
-    storage.setup()
+    search.setup()
     chat_service = chat.ChatService()
     doc_manager = DocumentManager(config.DATA_FOLDER)
     doc_manager.load()
 
+    scope_documents: set[str] | None = None
+    scope_doc_id = input("Document ID: ")
+    if scope_doc_id.strip():
+        scope_documents = {scope_doc_id}
+
+    chat_id = await chat_service.create_chat_async(scope_documents)
+
     while True:
         message = input(">>> ")
 
-        invocation = await chat_service.invoke_chat_async("123", message)
+        invocation = await chat_service.invoke_chat_async(chat_id, message)
         async for chunk in invocation:
             print(chunk.text_delta, end="", flush=True)
 

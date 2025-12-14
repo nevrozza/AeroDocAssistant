@@ -5,8 +5,9 @@ from langchain_core.documents.base import Document
 from langchain_openai import ChatOpenAI
 from langchain.tools import tool
 import re
+import uuid
 
-from app.core import storage, config
+from app.core import search, config
 
 
 @dataclass
@@ -20,6 +21,7 @@ class AsyncChatInvocation:
     retrieved_fragments: dict[str, Document]
     used_fragments: set[str]
     total_tokens: int
+    search_scope_documents: set[str]
 
     stream: AsyncIterable[LLMChunk]
 
@@ -35,8 +37,13 @@ class AsyncChatInvocation:
 
 class ChatService:
 
+    class __ChatData:
+        chat_id: str
+        history: list[AnyMessage]
+        search_scope_documents: set[str] | None
+
     __llm: ChatOpenAI
-    __chats: dict[str, list[AnyMessage]]
+    __chats: dict[str, __ChatData]
 
     def __init__(self):
         self.__chats = {}
@@ -85,16 +92,25 @@ class ChatService:
 
         self.__llm = llm.bind_tools([self.__search_tool], tool_choice="auto")
 
-    async def invoke_chat_async(self, chat_id: str, new_message: str) -> AsyncChatInvocation:
-        history = self.__chats.get(chat_id, None)
-        if not history:
-            history = await self.__init_new_chat_async()
-            self.__chats[chat_id] = history
+    async def create_chat_async(self, search_scope_documents: set[str] | None = None) -> str:
+        data = self.__ChatData()
+        data.chat_id = str(uuid.uuid4())
+        data.history = await self.__init_new_chat_async()
+        data.search_scope_documents = search_scope_documents
+        self.__chats[data.chat_id] = data
 
-        history.append(HumanMessage(new_message))
+        return data.chat_id
+
+    async def invoke_chat_async(self, chat_id: str, new_message: str) -> AsyncChatInvocation:
+        chat_data = self.__chats.get(chat_id, None)
+        if not chat_data:
+            raise KeyError(f"Chat {chat_id} does not exist")
+
+        chat_data.history.append(HumanMessage(new_message))
 
         invocation = AsyncChatInvocation()
-        invocation.chat_history = history
+        invocation.chat_history = chat_data.history
+        invocation.search_scope_documents = chat_data.search_scope_documents
         invocation.stream = self.__async_invocation_generator(invocation)
 
         return invocation
@@ -102,7 +118,7 @@ class ChatService:
     async def __async_invocation_generator(self, invocation: AsyncChatInvocation) -> AsyncGenerator[LLMChunk, None]:
         chunks = []
 
-        async for chunk in self.__stream_llm_async(invocation.chat_history, invocation.retrieved_fragments, invocation.used_fragments):
+        async for chunk in self.__stream_llm_async(invocation):
             chunks.append(chunk)
             invocation.total_tokens += chunk.tokens_delta
             yield chunk
@@ -117,7 +133,7 @@ class ChatService:
 
     @staticmethod
     @tool
-    async def __search_tool(query: str) -> tuple[str, list[Document]]:
+    async def __search_tool(query: str, scope_documents: set[str] | None = None) -> tuple[str, list[Document]]:
         """Векторный поиск через embedding по векторной базе документов. Составляй запросы так, чтобы при векторизации было максимум совпадений с документами.
         Результат не будет сохранен в истории чата. Процитируй нужные или использованые фрагменты из поиска в своем сообщении.
         Если слово в запросе может являться авиастроительным термином, то не изменяй его. Используй в исходном виде.
@@ -125,7 +141,7 @@ class ChatService:
         Args:
             query: Запрос в векторную базу данных для Dense поиска. Формируй запрос не как в поисковую систему, а чтобы при векторизации было максимум совпадений с документом. Используй максимально похожие формулировки и слова.
         """
-        docs = await storage.search_async(query)
+        docs = await search.search_async(query, document_ids=scope_documents)
 
         rendered = []
         for doc in docs:
@@ -149,8 +165,8 @@ class ChatService:
     def __extract_fragment_ids(text: str) -> list[str]:
         return re.findall(r'\[frag:([A-Za-z0-9._:-]+)]', text)
 
-    async def __stream_llm_async(self, history: list[AnyMessage], retrieved_fragments: dict[str, Document], used_fragments: set[str]) -> AsyncGenerator[LLMChunk, None]:
-        history = [*history]
+    async def __stream_llm_async(self, invocation: AsyncChatInvocation) -> AsyncGenerator[LLMChunk, None]:
+        history = [*invocation.chat_history]
 
         response = await self.__llm.ainvoke(history, config={"max_tokens": 100})
 
@@ -159,16 +175,21 @@ class ChatService:
 
             for call in response.tool_calls:
                 if call["name"] == "__search_tool":
-                    print(f"Invoking search with query {call["args"]}")
-                    rendered_result, frags = await self.__search_tool.ainvoke(call["args"])
+                    tool_args = {
+                        "query": call["args"]["query"],
+                        "scope_documents": invocation.search_scope_documents
+                    }
+                    print(f"Invoking search with query {tool_args}")
+                    rendered_result, frags = await self.__search_tool.ainvoke(tool_args)
+
                     for doc in frags:
-                        retrieved_fragments[doc.id] = doc
+                        invocation.retrieved_fragments[doc.id] = doc
 
                     history.append(ToolMessage(content=rendered_result, tool_call_id=call["id"]))
 
             async for chunk in self.__llm.astream(history, config={"max_tokens": 200}):
                 ids = self.__extract_fragment_ids(chunk.text)
-                used_fragments.update(ids)
+                invocation.used_fragments.update(ids)
 
                 yield LLMChunk(
                     chunk.text,

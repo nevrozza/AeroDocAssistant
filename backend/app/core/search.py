@@ -45,7 +45,7 @@ def setup():
     rebuild_bm25()
 
 
-def __normalize_text_natasha(text: str) -> list[str]:
+def __normalize_text_morph(text: str) -> list[str]:
     doc = Doc(text)
     doc.segment(segmenter)
     doc.tag_morph(morph_tagger)
@@ -64,12 +64,17 @@ def rebuild_bm25():
     global bm25_documents
     global bm25_retriever
 
-    if not bm25_documents:
-        docs = [Document("doc")]
-    else:
-        docs = bm25_documents
+    bm25_retriever = __create_bm25_retriever(None)
 
-    bm25_retriever = BM25Retriever.from_documents(docs, k=10, preprocess_func=__normalize_text_natasha)
+
+def __create_bm25_retriever(document_ids: set[str] | None) -> BM25Retriever:
+    docs = bm25_documents
+    if not docs:
+        docs = [Document("doc")]
+    elif document_ids is not None:
+        docs = filter(lambda f: f.metadata["source"] in document_ids, docs)
+
+    return BM25Retriever.from_documents(docs, k=10, preprocess_func=__normalize_text_morph)
 
 
 def _load_documents_from_chroma() -> list[Document]:
@@ -106,7 +111,7 @@ def hybrid_reranker(
         k: int = 60,
         boost_factor: float = 1.0
 ) -> list[Document]:
-    query_keywords = set(__normalize_text_natasha(query.lower()))
+    query_keywords = set(__normalize_text_morph(query.lower()))
 
     ranks = {}
 
@@ -118,7 +123,7 @@ def hybrid_reranker(
 
     for rank, doc in enumerate(sparse_results):
         content = doc.page_content
-        content_lower = " ".join(__normalize_text_natasha(content.lower()))
+        content_lower = " ".join(__normalize_text_morph(content.lower()))
 
         if content not in ranks:
             ranks[content] = {'doc': doc, 'score': 0.0, 'keyword_matches': 0}
@@ -144,14 +149,27 @@ def hybrid_reranker(
     return [doc for doc, _ in fused_results]
 
 
-async def search_async(query: str, k: int = 5) -> list[Document]:
+async def search_async(query: str, k: int = 5, document_ids: set[str] | None = None) -> list[Document]:
     loop = asyncio.get_event_loop()
 
-    dense_task = vectorstore.asimilarity_search_with_relevance_scores(query, k=k)
+    filters = {}
+    if document_ids is not None:
+        if not document_ids:
+            return []
+
+        filters["filter"] = {"source": {"$in": list(document_ids)}}
+
+    dense_task = vectorstore.asimilarity_search_with_relevance_scores(query, k=k, **filters)
+
+    def sparse_search(*args) -> list[Document]:
+        retriever = bm25_retriever
+        if document_ids is not None:
+            retriever = __create_bm25_retriever(document_ids)
+        return retriever.invoke(query)
 
     sparse_task = loop.run_in_executor(
         None,
-        lambda: bm25_retriever.invoke(query)
+        sparse_search,
     )
 
     dense_results, sparse_results = await asyncio.gather(dense_task, sparse_task)

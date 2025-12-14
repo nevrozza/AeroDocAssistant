@@ -1,7 +1,8 @@
-import type {FC} from "react";
+import  {type FC} from "react";
 
 import "./icon-button.css"
 import {colors, type Icon} from "../../widgets"
+import * as React from "react";
 
 
 interface IconButtonProps {
@@ -9,13 +10,13 @@ interface IconButtonProps {
     iconColor?: string,
     containerColor?: string,
     opacity?: number,
-    onClick?: () => void,
+    onClick?: (event?: React.MouseEvent) => void,
     icon: Icon;
 }
 
 const IconButton: FC<IconButtonProps>
     = ({
-           radius = 60,
+           radius = 48,
            iconColor = colors.onBackground,
            containerColor = colors.containerHigh,
            opacity = iconColor !== colors.onBackground ? 1 : .7,
@@ -25,8 +26,8 @@ const IconButton: FC<IconButtonProps>
     const iconSize = radius - 20;
 
     return <button className="container hoverable clickable"
-                   style={{width: radius, height: radius, backgroundColor: containerColor}}
-                   onClick={onClick}
+                   style={{width: radius, height: radius, backgroundColor: containerColor, color: iconColor}}
+                   onClick={ (event) => onClick(event)}
     >
         <Icon
             style={
@@ -36,7 +37,6 @@ const IconButton: FC<IconButtonProps>
                     opacity: opacity,
                 }
             }
-            color={iconColor}
         />
     </button>
 

@@ -1,36 +1,38 @@
-.textbox-container{
+.textbox-container {
     display: flex;
+    min-height: 60px;
+    width: inherit;
+    align-items: center;
+    transition: var(--theme-transition), border-radius 600ms;
+    position: relative;
+}
 
-    height: 60px;
-    border: 0px;
-
+.textbox {
+    width: 100%;
     font-weight: 600;
     font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.15px;
     vertical-align: middle;
-}
-.textbox-container{
-    border-radius: 100px;
-    width: 300px;
-    background-color: black;
-}
-.textbox{
-    border: 0px;
+
+    border: none;
     outline: none;
-    border-top-left-radius: 100px;
-    border-bottom-left-radius: 100px;
-    padding-left: 25px;
-    padding-right: 10px;
-    width: 215px;
-    outline: none;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.15px;
-    vertical-align: middle;
+
+    caret-color: var(--primary);
+    background-color: transparent;
+
+    resize: none; /* Prevent manual resize */
+    line-height: 1.5; /* Better line spacing */
+    font-family: inherit; /* Use same font as rest of app */
+
 }
-.trailing-icon{
+
+.textbox::placeholder {
+    color: var(--on-background);
+    opacity: .7;
+    font-weight: 700;
+}
+
+.trailing-icon {
     display: flex;
     align-items: center;
+    padding-right: 10px;
 }

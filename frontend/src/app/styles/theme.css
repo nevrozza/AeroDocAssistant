@@ -1,10 +1,16 @@
-* {
-  transition:
-          color calc(600ms * var(--enable-theme-transitions)),
-          background-color calc(600ms * var(--enable-theme-transitions)),
-          border-color calc(600ms * var(--enable-theme-transitions)),
-          box-shadow calc(600ms * var(--enable-theme-transitions));
+html {
+  --transition-duration: calc(600ms * var(--enable-theme-transitions));
+  --theme-transition:
+          color var(--transition-duration),
+          background-color var(--transition-duration),
+          border-color var(--transition-duration),
+          box-shadow var(--transition-duration);
 }
+
+* {
+  transition: var(--theme-transition);
+}
+
 
 html {
   /* workaround: skip initial animation (will be 1 after 100ms) */

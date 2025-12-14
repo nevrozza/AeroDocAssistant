@@ -69,10 +69,11 @@ def rebuild_bm25():
 
 def __create_bm25_retriever(document_ids: set[str] | None) -> BM25Retriever:
     docs = bm25_documents
+    if document_ids is not None:
+        docs = tuple(filter(lambda f: f.metadata["source"] in document_ids, docs))
+
     if not docs:
         docs = [Document("doc")]
-    elif document_ids is not None:
-        docs = filter(lambda f: f.metadata["source"] in document_ids, docs)
 
     return BM25Retriever.from_documents(docs, k=10, preprocess_func=__normalize_text_morph)
 

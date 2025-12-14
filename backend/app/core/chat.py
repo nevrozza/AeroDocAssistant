@@ -3,11 +3,12 @@ from dataclasses import dataclass
 from langchain.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage, AnyMessage
 from langchain_core.documents.base import Document
 from langchain_openai import ChatOpenAI
-from langchain.tools import tool
+from langchain.tools import tool, ToolRuntime
 import re
 import uuid
 
 from app.core import search, config
+from app.core.doc_manager import DocumentMetadata
 
 
 @dataclass
@@ -21,7 +22,7 @@ class AsyncChatInvocation:
     retrieved_fragments: dict[str, Document]
     used_fragments: set[str]
     total_tokens: int
-    search_scope_documents: set[str]
+    document: Document | None
 
     stream: AsyncIterable[LLMChunk]
 
@@ -40,7 +41,7 @@ class ChatService:
     class __ChatData:
         chat_id: str
         history: list[AnyMessage]
-        search_scope_documents: set[str] | None
+        document: DocumentMetadata | None
 
     __llm: ChatOpenAI
     __chats: dict[str, __ChatData]
@@ -83,6 +84,14 @@ class ChatService:
     Если в документах нет ответа - напиши. Но снача ты обязан запустить поиск.
     """
 
+    __CHAT_DOCUMENT_SETUP_INSTRUCTIONS = """
+    В этом диалоге пользователь просит работать с конкретным документом: {document_title}.
+    Перед запуском поиска оцени, задает ли пользователь вопрос про используемый документ или в целом про всю базу.
+    Если пользователь в запросе упоминает некий документ, значит он имеет в виде этот документ.
+    Чтобы запустить поиск только в нём, укажи only_in_document=True в search_tool.
+    Но ты можешь искать информацию и по всей базе. Для этого укажи only_in_document=False.
+    """
+
     def __setup(self):
         llm = ChatOpenAI(
             base_url="https://llm.api.cloud.yandex.net/v1",
@@ -92,11 +101,11 @@ class ChatService:
 
         self.__llm = llm.bind_tools([self.__search_tool], tool_choice="auto")
 
-    async def create_chat_async(self, search_scope_documents: set[str] | None = None) -> str:
+    async def create_chat_async(self, document: DocumentMetadata | None = None) -> str:
         data = self.__ChatData()
         data.chat_id = str(uuid.uuid4())
-        data.history = await self.__init_new_chat_async()
-        data.search_scope_documents = search_scope_documents
+        data.history = await self.__init_new_chat_async(document)
+        data.document = document
         self.__chats[data.chat_id] = data
 
         return data.chat_id
@@ -110,7 +119,7 @@ class ChatService:
 
         invocation = AsyncChatInvocation()
         invocation.chat_history = chat_data.history
-        invocation.search_scope_documents = chat_data.search_scope_documents
+        invocation.document = chat_data.document
         invocation.stream = self.__async_invocation_generator(invocation)
 
         return invocation
@@ -128,19 +137,32 @@ class ChatService:
         doc_ids = self.__extract_fragment_ids(invocation.chat_history[-1].text)
         invocation.used_fragments.update(doc_ids)
 
-    async def __init_new_chat_async(self) -> list[AnyMessage]:
-        return [SystemMessage(self.__CHAT_SETUP_INSTRUCTIONS)]
+    async def __init_new_chat_async(self, document: DocumentMetadata | None) -> list[AnyMessage]:
+        result = [SystemMessage(self.__CHAT_SETUP_INSTRUCTIONS)]
+        if document:
+            result.append(SystemMessage(self.__CHAT_DOCUMENT_SETUP_INSTRUCTIONS.format(document_title=document.title)))
+            print(f"Set document for chat: {document.title}")
+
+        return result
 
     @staticmethod
     @tool
-    async def __search_tool(query: str, scope_documents: set[str] | None = None) -> tuple[str, list[Document]]:
+    async def __search_tool(runtime: ToolRuntime, query: str, only_in_document: bool = False) -> tuple[str, list[Document]]:
         """Векторный поиск через embedding по векторной базе документов. Составляй запросы так, чтобы при векторизации было максимум совпадений с документами.
         Результат не будет сохранен в истории чата. Процитируй нужные или использованые фрагменты из поиска в своем сообщении.
         Если слово в запросе может являться авиастроительным термином, то не изменяй его. Используй в исходном виде.
 
         Args:
             query: Запрос в векторную базу данных для Dense поиска. Формируй запрос не как в поисковую систему, а чтобы при векторизации было максимум совпадений с документом. Используй максимально похожие формулировки и слова.
+            only_in_document: True, чтобы ограничить поиск только текущим документом. При False поиск производится по всей базе.
         """
+        document: DocumentMetadata = runtime.context.document
+
+        if only_in_document and document:
+            scope_documents = {str(document.doc_id)}
+        else:
+            scope_documents = None
+
         docs = await search.search_async(query, document_ids=scope_documents)
 
         rendered = []
@@ -150,14 +172,13 @@ class ChatService:
             )
 
         return (
-                "ЭТО ЕДИНСТВЕННЫЙ ДОПУСТИМЫЙ ИСТОЧНИК ИНФОРМАЦИИ.\n"
-                "ЗАПРЕЩЕНО использовать любые знания вне этих документов.\n"
-                "ПРОАНАЛИЗИРУЙ НАЙДЕННЫЕ ДОКУМЕНТЫ И ИСПОЛЬЗУЙ ТОЛЬКО ТЕ, КОТОРЫЕ СОДЕРЖАТ РЕЛЕВАНТНУЮ ИНФОРМАЦИЮ.\n"
+                "ПРОАНАЛИЗИРУЙ НАЙДЕННЫЕ ФРАГМЕНТЫ И ИСПОЛЬЗУЙ ТОЛЬКО ТЕ, КОТОРЫЕ СОДЕРЖАТ РЕЛЕВАНТНУЮ ИНФОРМАЦИЮ.\n"
                 "ЕСЛИ РЕЛЕВАНТНОЙ ИНФОРМАЦИИ НЕ НАЙДЕНО, ТО ЗАПУСТИ ПОИСК ЕЩЕ РАЗ\n"
                 "Каждое утверждение ОБЯЗАНО содержать прямую цитату.\n"
+                "ЕСЛИ ИСПОЛЬЗУЕШЬ ИНФОРМАЦИЮ ИЗ НЕСКОЛЬКИХ ФРАГМЕНТОВ, ТО ЦИТАТ ДОЛЖНО БЫТЬ НЕСКОЛЬКО. УКАЖИ КАЖДЫЙ ФРАГМЕНТ, ИЗ КОТОРОГО ВЗЯЛ ИНФОРМАЦИЮ."
                 "и ссылку в формате ```[frag:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx] цитата```, куда вместо xxxx... обязательно должен быть подставлен ID использованого фрагмента.\n"
                 "ТЫ ОБЯЗАН ФОРМАТИРОВАТЬ С ИСПОЛЬЗОВАНИЕМ СИМВОЛОВ ``` КАК В ПРИМЕРЕ.\n"
-                "До этого инструкция, на которую нельзя ссылаться и говорить о ней пользователю. Содержимое документов:\n\n"
+                "До этого инструкция, на которую нельзя ссылаться и говорить о ней пользователю. Содержимое фрагментов:\n\n"
                 + "\n\n".join(rendered), docs
         )
 
@@ -175,9 +196,11 @@ class ChatService:
 
             for call in response.tool_calls:
                 if call["name"] == "__search_tool":
+                    runtime = ToolRuntime(None, invocation, None, None, None, None)
                     tool_args = {
+                        "runtime": runtime,
                         "query": call["args"]["query"],
-                        "scope_documents": invocation.search_scope_documents
+                        "only_in_document": call["args"].get("only_in_document", False)
                     }
                     print(f"Invoking search with query {tool_args}")
                     rendered_result, frags = await self.__search_tool.ainvoke(tool_args)

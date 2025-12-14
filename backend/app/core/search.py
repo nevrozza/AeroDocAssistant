@@ -101,7 +101,6 @@ async def update_document_async(doc: Document) -> str:
     doc_id = (await vectorstore.aadd_documents([doc]))[0]
 
     bm25_documents.append(doc)
-    rebuild_bm25()
     return doc_id
 
 

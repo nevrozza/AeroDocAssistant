@@ -1,1 +1,9 @@
-# TODO
+
+services:
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend/app:/srv/app
+    ports:
+      - "8000:8000"

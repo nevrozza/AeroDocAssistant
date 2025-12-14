@@ -1,5 +1,6 @@
 import {createBrowserRouter, Route, createRoutesFromElements} from "react-router";
 import {DummyPage} from "../pages";
+import {AiChatBox} from "../components";
 
 
 const Dummy2 = () => {
@@ -8,7 +9,8 @@ const Dummy2 = () => {
 
 const routes = createRoutesFromElements(
     <>
-        <Route path="/" element={<DummyPage count={10}/>}/>
+        <Route path="/" element={<AiChatBox/>}/>
+        <Route path="/dummy" element={<DummyPage count={10}/>}/>
         <Route path="/2" Component={Dummy2}/>
     </>,
 );

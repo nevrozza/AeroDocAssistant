@@ -40,6 +40,6 @@ const themeButton = (): ThemeViewModel => {
                 break;
         }
     }
-    return {theme, toggleTheme}
+    return {theme: theme, toggleTheme: toggleTheme}
 }
 export default themeButton

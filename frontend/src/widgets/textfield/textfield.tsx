@@ -3,6 +3,7 @@ import "./textfield.css"
 import {colors, IconButton} from "../../widgets"
 import {type FC, type RefObject, useEffect, useState} from "react";
 import * as React from "react";
+import {StringUtils} from "../../shared";
 
 interface TextFieldProps {
     ref: RefObject<HTMLTextAreaElement | null>;
@@ -46,7 +47,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         props.onChange?.(e);
-        setTrailingIconVisible(e.target.value === '' || !trailingIconHidable);
+        setTrailingIconVisible(StringUtils.isEmpty(e.target.value) || !trailingIconHidable);
 
         // Auto-resize
         const textarea = e.target;

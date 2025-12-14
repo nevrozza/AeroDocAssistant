@@ -37,8 +37,8 @@ class DocumentManager:
     def list_documents(self) -> Generator[DocumentMetadata]:
         yield from self.__documents.values()
 
-    def get_by_id(self, doc_id: str) -> DocumentMetadata | None:
-        return self.__documents.get(doc_id)
+    def get_by_id(self, doc_id: str | UUID | UUID4) -> DocumentMetadata | None:
+        return self.__documents.get(str(doc_id))
 
     def get_abs_path(self, loca_path: Path) -> Path:
         return self.__directory.joinpath(loca_path).resolve()
@@ -47,12 +47,13 @@ class DocumentManager:
         title = await LLMUtils().get_doc_title_and_description_async(fragments)
         metadata.title = title
 
-        self.__documents[metadata.doc_id] = metadata
+        self.__documents[str(metadata.doc_id)] = metadata
         self.__save_index()
 
     def load(self):
         try:
             self.__load_index()
+            print(f"Loaded {len(self.__documents)} documents from index")
         except Exception as e:
             if isinstance(e, FileNotFoundError):
                 print("Failed to find index. Creating...")
@@ -72,7 +73,7 @@ class DocumentManager:
 
         validated = _IndexSchema.model_validate_json(raw)
         for doc in validated.documents:
-            self.__documents[doc.doc_id] = doc
+            self.__documents[str(doc.doc_id)] = doc
 
     def update_index(self):
         self.__documents.clear()
@@ -82,8 +83,8 @@ class DocumentManager:
         for path in files:
             rel_path = path.relative_to(self.__directory)
 
-            doc = DocumentMetadata(doc_id=uuid4().hex, filepath=rel_path)
-            self.__documents[doc.doc_id] = doc
+            doc = DocumentMetadata(doc_id=uuid4(), filepath=rel_path)
+            self.__documents[str(doc.doc_id)] = doc
 
         print(f"Indexed {len(self.__documents)} documents")
 

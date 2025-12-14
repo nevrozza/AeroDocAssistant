@@ -1,11 +1,14 @@
 import asyncio
 
-from app.core import chat, storage
+from app.core import chat, storage, config
+from app.core.doc_manager import DocumentManager
 
 
 async def main():
     storage.setup()
     chat_service = chat.ChatService()
+    doc_manager = DocumentManager(config.DATA_FOLDER)
+    doc_manager.load()
 
     while True:
         message = input(">>> ")
@@ -22,7 +25,13 @@ async def main():
                 print(f"Unretrieved used document: {frag_id}")
                 continue
 
-            print(f"Использовано: ```{frag.metadata.get('title', '')}```")
+            source = frag.metadata.get('source', "")
+            if not source:
+                print(f"Source of fragment {frag_id} is not specified")
+                continue
+
+            doc = doc_manager.get_by_id(source)
+            print(f"Использовано: ```{doc.title}```")
 
 
 if __name__ == '__main__':

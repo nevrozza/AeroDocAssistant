@@ -51,6 +51,9 @@ class ChatService:
     полученного через инструмент search_tool.
     В него нужно передать текст для векторизации, который по содержанию максимально будет совпадать с искомым документов.
     Предположи, какие выражения и слова используются в целевом документе и ищи по ним.
+    
+    ВАЖНО:
+    Если слово может являться авиастроительным или другим термином/названием, то ЗАПРЕЩЕНО МЕНЯТЬ его. Используй в исходном виде, не исправляя орфографию.
 
     Формат ответа:
     - обычный текст
@@ -117,6 +120,7 @@ class ChatService:
     async def __search_tool(query: str) -> tuple[str, list[Document]]:
         """Векторный поиск через embedding по векторной базе документов. Составляй запросы так, чтобы при векторизации было максимум совпадений с документами.
         Результат не будет сохранен в истории чата. Процитируй нужные или использованые фрагменты из поиска в своем сообщении.
+        Если слово в запросе может являться авиастроительным термином, то не изменяй его. Используй в исходном виде.
 
         Args:
             query: Запрос в векторную базу данных для Dense поиска. Формируй запрос не как в поисковую систему, а чтобы при векторизации было максимум совпадений с документом. Используй максимально похожие формулировки и слова.
@@ -126,8 +130,7 @@ class ChatService:
         rendered = []
         for doc in docs:
             rendered.append(
-                f"[frag:{doc.id}] Из документа: {doc.metadata.get('title', '')}\n"
-                f"<<<\n{doc.page_content}\n>>>\n"
+                f"<<<[frag:{doc.id}] {doc.page_content}\n>>>\n"
             )
 
         return (
@@ -136,7 +139,7 @@ class ChatService:
                 "ПРОАНАЛИЗИРУЙ НАЙДЕННЫЕ ДОКУМЕНТЫ И ИСПОЛЬЗУЙ ТОЛЬКО ТЕ, КОТОРЫЕ СОДЕРЖАТ РЕЛЕВАНТНУЮ ИНФОРМАЦИЮ.\n"
                 "ЕСЛИ РЕЛЕВАНТНОЙ ИНФОРМАЦИИ НЕ НАЙДЕНО, ТО ЗАПУСТИ ПОИСК ЕЩЕ РАЗ\n"
                 "Каждое утверждение ОБЯЗАНО содержать прямую цитату.\n"
-                "и ссылку в формате ```[frag:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx] цитата```.\n"
+                "и ссылку в формате ```[frag:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx] цитата```, куда вместо xxxx... обязательно должен быть подставлен ID использованого фрагмента.\n"
                 "ТЫ ОБЯЗАН ФОРМАТИРОВАТЬ С ИСПОЛЬЗОВАНИЕМ СИМВОЛОВ ``` КАК В ПРИМЕРЕ.\n"
                 "До этого инструкция, на которую нельзя ссылаться и говорить о ней пользователю. Содержимое документов:\n\n"
                 + "\n\n".join(rendered), docs
@@ -149,7 +152,7 @@ class ChatService:
     async def __stream_llm_async(self, history: list[AnyMessage], retrieved_fragments: dict[str, Document], used_fragments: set[str]) -> AsyncGenerator[LLMChunk, None]:
         history = [*history]
 
-        response = await self.__llm.ainvoke(history, config={"max_tokens": 50})
+        response = await self.__llm.ainvoke(history, config={"max_tokens": 100})
 
         if response.tool_calls:
             history.append(response)
@@ -163,7 +166,7 @@ class ChatService:
 
                     history.append(ToolMessage(content=rendered_result, tool_call_id=call["id"]))
 
-            async for chunk in self.__llm.astream(history, config={"max_tokens": 150}):
+            async for chunk in self.__llm.astream(history, config={"max_tokens": 200}):
                 ids = self.__extract_fragment_ids(chunk.text)
                 used_fragments.update(ids)
 

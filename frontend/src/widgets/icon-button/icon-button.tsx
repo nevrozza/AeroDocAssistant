@@ -16,7 +16,7 @@ interface IconButtonProps {
 
 const IconButton: FC<IconButtonProps>
     = ({
-           radius = 60,
+           radius = 48,
            iconColor = colors.onBackground,
            containerColor = colors.containerHigh,
            opacity = iconColor !== colors.onBackground ? 1 : .7,

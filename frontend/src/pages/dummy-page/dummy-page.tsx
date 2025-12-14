@@ -1,8 +1,8 @@
 import "./dummy-page.css"
 import {useRef, type FC} from "react";
 import {ThemeButton} from "../../components";
-import { TextField } from "../../widgets";
-import { LuMic } from "react-icons/lu";
+import {IconButton, TextField} from "../../widgets";
+import { LuMic, LuSend } from "react-icons/lu";
 
 
 interface DummyPageProps {
@@ -10,12 +10,13 @@ interface DummyPageProps {
 }
 
 const DummyPage: FC<DummyPageProps> = ({count}) => {
-    const ref = useRef<HTMLInputElement>(null)
+    const ref = useRef<HTMLTextAreaElement>(null)
     
     return <div>
         <h1>Dummy+{count}</h1>
         <ThemeButton/>
-        <TextField trailingIcon={LuMic} value="123" ref={ref}></TextField>
+        <TextField trailingIcon={LuMic} ref={ref}></TextField>
+        <IconButton icon={LuSend} onClick={ () => console.log(ref.current?.value) }/>
     </div>;
 };
 

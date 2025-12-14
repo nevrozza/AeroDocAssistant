@@ -1,33 +1,25 @@
 import type { Icon } from "../utils/icon";
 import "./textfield.css"
 import {colors, IconButton} from "../../widgets"
-import {type FC, type RefObject, useEffect, useRef, useState} from "react";
+import {type FC, type RefObject, useEffect, useState} from "react";
 import * as React from "react";
 
 interface TextFieldProps {
-    value?: string;
-    onChange?: (value: string) => void;
+    ref: RefObject<HTMLTextAreaElement | null>;
     trailingIcon?: Icon;
     onTrailingIconClick?: () => void;
-    ref: RefObject<HTMLTextAreaElement | null>;
     placeholder?: string;
     minLines?: number;
     maxLines?: number;
 }
 
 const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
-    const internalRef = useRef<HTMLTextAreaElement>(null);
 
     const minBorderRadius = 20; // минимальное скругление при максимальном количестве строк
     const maxBorderRadius = 30; // максимальное скругление при одной строке
     const [currentLines, setCurrentLines] = useState(props.minLines || 1);
     const [borderRadius, setBorderRadius] = useState(maxBorderRadius);
 
-    useEffect(() => {
-        if (props.ref) {
-            (props.ref as any).current = internalRef.current;
-        }
-    }, [props.ref]);
 
     useEffect(() => {
         // Рассчитываем скругление в зависимости от количества строк
@@ -49,8 +41,6 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
     }, [currentLines, props.maxLines]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        props.onChange?.(e.target.value);
-
         // Auto-resize
         const textarea = e.target;
         textarea.style.height = 'auto';
@@ -70,7 +60,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
     return (
         <div className="textbox-container" style={{backgroundColor: colors.containerHigh, borderRadius: borderRadius}}>
             <textarea
-                ref={internalRef}
+                ref={props.ref}
                 placeholder={props.placeholder || "Введите запрос"}
                 className="textbox"
                 onChange={handleChange}

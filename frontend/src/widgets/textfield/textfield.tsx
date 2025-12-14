@@ -3,6 +3,7 @@ import "./textfield.css"
 import {colors, IconButton} from "../../widgets"
 import {type FC, type RefObject, useEffect, useState} from "react";
 import * as React from "react";
+import {StringUtils} from "../../shared";
 
 interface TextFieldProps {
     ref: RefObject<HTMLTextAreaElement | null>;
@@ -11,6 +12,7 @@ interface TextFieldProps {
     trailingIconHidable?: boolean;
     onTrailingIconClick?: () => void;
     placeholder?: string;
+    width?: number | string;
     minLines?: number;
     maxLines?: number;
 }
@@ -46,7 +48,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         props.onChange?.(e);
-        setTrailingIconVisible(e.target.value === '' || !trailingIconHidable);
+        setTrailingIconVisible(StringUtils.isEmpty(e.target.value) || !trailingIconHidable);
 
         // Auto-resize
         const textarea = e.target;
@@ -65,7 +67,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
     };
 
     return (
-        <div className="textbox-container" style={{backgroundColor: colors.containerHigh, borderRadius: borderRadius}}>
+        <div className="textbox-container" style={{backgroundColor: colors.containerHigh, borderRadius: borderRadius, width: props.width}}>
             <textarea
                 ref={props.ref}
                 placeholder={props.placeholder || "Введите запрос"}

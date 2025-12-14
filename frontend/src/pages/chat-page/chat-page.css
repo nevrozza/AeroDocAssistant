@@ -1,0 +1,74 @@
+.chat-page {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-top: 0;
+    width: 100%;
+
+    height: 100dvh;
+}
+
+
+.chat-input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 var(--bottom-chatbox-padding);
+}
+
+.chat-input-container textarea {
+    width: min(700px, (.7 * var(--winner)));
+}
+
+@media (hover: hover) {
+    .chat-page {
+        --bottom-chatbox-padding: 70px
+    }
+}
+@media (hover: none) {
+    .chat-page {
+        --bottom-chatbox-padding: 30px
+    }
+}
+
+.chat-messages-container {
+    font-weight: normal;
+    font-size: 15px;
+    letter-spacing: 0;
+    line-height: 20px;
+
+    display: flex;
+    flex-direction: column;
+
+    width: min(800px, (.8 * var(--winner)));
+
+    align-self: center;
+    scrollbar-color: var(--on-background);
+}
+
+.overlay {
+    position: fixed;
+    z-index: 99;
+}
+
+@media (hover: hover) {
+    .highlight-blur {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        justify-self: center;
+        background-color: var(--primary-container);
+        width: 100%;
+        height: 30px;
+        filter: blur(100px);
+
+        border-radius: 30px;
+        z-index: 50;
+        margin-bottom: 85px;
+    }
+}

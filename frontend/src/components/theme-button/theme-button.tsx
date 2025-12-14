@@ -1,10 +1,10 @@
 import {colors, type Icon, IconButton} from "../../widgets";
-import themeButton, {type ThemeViewModel} from "./theme-button.ts";
+import themeButtonViewModel, {type ThemeViewModel} from "./theme-button-vm.ts";
 import {LuSunMedium, LuMoon, LuSunMoon} from 'react-icons/lu'
 
 
 const ThemeButton = () => {
-    const viewModel: ThemeViewModel = themeButton();
+    const viewModel: ThemeViewModel = themeButtonViewModel();
 
     const getThemeIcon = (theme: string): Icon => {
         return (theme === null || theme === "light dark")

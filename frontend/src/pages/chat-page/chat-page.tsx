@@ -5,6 +5,7 @@ import {AiChatBox, ThemeButton} from "../../components";
 import {BottomScrollShadow, TopScrollShadow} from "./utils/scroll-shadows.tsx";
 import {MessageContainer} from "./utils/message-container.tsx";
 import {getChatboxHeight} from "./utils/get-chatbox-height.ts";
+import {MyMessage, Spacer} from "../../widgets";
 
 
 const ChatPage: FC = () => {
@@ -23,7 +24,10 @@ const ChatPage: FC = () => {
                     (() => {
                         const elements = [];
                         for (let i = 1; i <= 60; i++) {
-                            elements.push(<div key={i}>Сообщение{i}</div>);
+                            elements.push(<MyMessage key = {i} text={"Сообщение"+i}/>);
+                            if (i != 60) {
+                                elements.push(<Spacer height = {10}/>)
+                            }
                         }
                         return elements;
                     })()

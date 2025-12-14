@@ -1,9 +1,11 @@
+
 .hoverable:hover {
     filter: brightness(85%);
 }
 
 .clickable {
-    transition: transform 200ms;
+    cursor: pointer;
+    transition: var(--theme-transition), transform 200ms;
 }
 
 .clickable:active {

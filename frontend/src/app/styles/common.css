@@ -1,0 +1,19 @@
+html {
+    --winner: 0;
+    --hinner: 0
+}
+
+
+.hoverable:hover {
+    filter: brightness(85%);
+}
+
+.clickable {
+    cursor: pointer;
+    transition: var(--theme-transition), transform 200ms;
+}
+
+.clickable:active {
+    transform: scale(0.95);
+    filter: brightness(75%);
+}

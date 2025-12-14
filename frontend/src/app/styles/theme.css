@@ -1,0 +1,57 @@
+html {
+  --transition-duration: calc(600ms * var(--enable-theme-transitions));
+  --theme-transition: color 0ms
+          /*color var(--transition-duration) ,*/
+          /*background-color var(--transition-duration),*/
+          /*border-color var(--transition-duration),*/
+          /*box-shadow var(--transition-duration),*/
+          /*accent-color var(--transition-duration),*/
+          /*fill-color var(--transition-duration),*/
+          /*stroke-color var(--transition-duration),*/
+          /*scrollbar-color var(--transition-duration),*/
+          /*color var(--transition-duration);*/
+}
+
+::placeholder {
+  transition: var(--theme-transition);
+}
+
+* {
+  transition: var(--theme-transition);
+}
+
+
+html {
+
+
+  /* workaround: skip initial animation (will be 1 after 100ms) */
+  --enable-theme-transitions: 0;
+  --primary: light-dark(var(--l-primary), var(--d-primary));
+  --on-primary: light-dark(var(--l-on-primary), var(--d-on-primary));
+
+  --secondary: light-dark(var(--l-secondary), var(--d-secondary));
+  --on-secondary: light-dark(var(--l-on-secondary), var(--d-on-secondary));
+
+  --tertiary: light-dark(var(--l-tertiary), var(--d-tertiary));
+  --on-tertiary: light-dark(var(--l-on-tertiary), var(--d-on-tertiary));
+
+  --container-low: light-dark(var(--l-container-low), var(--d-container-low));
+  --container: light-dark(var(--l-container), var(--d-container));
+  --container-high: light-dark(var(--l-container-high), var(--d-container-high));
+  --container-highest: light-dark(var(--l-container-highest), var(--d-container-highest));
+
+  --primary-container: light-dark(var(--l-primary-container), var(--d-primary-container));
+  --on-primary-container: light-dark(var(--l-on-primary-container), var(--d-on-primary-container));
+
+  --secondary-container: light-dark(var(--l-secondary-container), var(--d-secondary-container));
+  --on-secondary-container: light-dark(var(--l-on-secondary-container), var(--d-on-secondary-container));
+
+  --tertiary-container: light-dark(var(--l-tertiary-container), var(--d-tertiary-container));
+  --on-tertiary-container: light-dark(var(--l-on-tertiary-container), var(--d-on-tertiary-container));
+
+  --background: light-dark(var(--l-background), var(--d-background));
+  --on-background: light-dark(var(--l-on-background), var(--d-on-background));
+
+  --outline: light-dark(var(--l-outline), var(--d-outline));
+  --outline-variant: light-dark(var(--l-outline-variant), var(--d-outline-variant));
+}

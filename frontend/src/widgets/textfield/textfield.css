@@ -1,0 +1,38 @@
+.textbox-container {
+    display: flex;
+    min-height: 60px;
+    align-items: center;
+    transition: var(--theme-transition), border-radius 600ms;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.textbox {
+    width: 100%;
+    font-weight: 600;
+    font-size: 16px;
+    vertical-align: middle;
+
+    border: none;
+    outline: none;
+
+    caret-color: var(--primary);
+    background-color: transparent;
+
+    resize: none; /* Prevent manual resize */
+    line-height: 1.5; /* Better line spacing */
+    font-family: inherit; /* Use same font as rest of app */
+    box-sizing: border-box;
+}
+
+.textbox::placeholder {
+    color: var(--on-background);
+    opacity: .7;
+    font-weight: 700;
+}
+
+.trailing-icon {
+    display: flex;
+    align-items: center;
+    padding-right: 10px;
+}

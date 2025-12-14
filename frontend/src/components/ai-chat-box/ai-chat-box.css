@@ -12,9 +12,10 @@
 
 .input-row {
     display: flex;
-    align-items: center;
+    align-items: end;
     gap: 10px;
 }
+
 
 .textfield-wrapper {
     flex: 1; /* Поле ввода растягивается */

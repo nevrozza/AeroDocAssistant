@@ -22,7 +22,12 @@ const OutlinedButton = ({
 
     <button className="button-container hoverable clickable"
             onClick={onClick}
-            style={{backgroundColor: containerColor, color: color, borderColor: colors.containerHighest}}
+            style={{
+                backgroundColor: blury ? colors.transparent : containerColor,
+                color: color,
+                borderColor: colors.containerHighest,
+                backdropFilter: blury ? "blur(10px)" : '',
+            }}
     >
         {Icon && (
             <Icon size={18}/>

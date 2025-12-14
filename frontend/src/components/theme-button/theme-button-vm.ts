@@ -8,7 +8,7 @@ export interface ThemeViewModel {
     toggleTheme: () => void,
 }
 
-const themeButton = (): ThemeViewModel => {
+const themeButtonViewModel = (): ThemeViewModel => {
 
 
     const [theme, setTheme] = useState<string>("light dark")
@@ -42,4 +42,4 @@ const themeButton = (): ThemeViewModel => {
     }
     return {theme: theme, toggleTheme: toggleTheme}
 }
-export default themeButton
+export default themeButtonViewModel

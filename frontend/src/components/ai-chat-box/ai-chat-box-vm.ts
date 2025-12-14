@@ -1,12 +1,12 @@
 import {StringUtils} from "../../shared";
 import {type RefObject, useRef} from "react";
 
-export interface AiChatBoxViewModel {
+export interface AIChatBoxViewModel {
     onSendClick: () => void,
     textFieldRef: RefObject<HTMLTextAreaElement | null>
 }
 
-const aiChatBox = (): AiChatBoxViewModel => {
+const aiChatBoxViewModel = (): AIChatBoxViewModel => {
 
     const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
@@ -20,4 +20,4 @@ const aiChatBox = (): AiChatBoxViewModel => {
 
     return {onSendClick: onSendClick, textFieldRef: textFieldRef}
 }
-export default aiChatBox
+export default aiChatBoxViewModel

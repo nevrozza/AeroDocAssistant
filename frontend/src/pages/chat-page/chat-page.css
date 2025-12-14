@@ -1,0 +1,44 @@
+.chat-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.chat-input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 70px;
+}
+
+.chat-messages-container {
+    justify-self: center;
+    align-self: center;
+}
+
+.static {
+    position: fixed;
+    z-index: 99;
+}
+
+.highlight {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-self: center;
+    background-color: var(--primary-container);
+    width: 70%;
+    height: 20px;
+    filter: blur(100px);
+
+    border-radius: 30px;
+    z-index: 50;
+    margin-bottom: 70px;
+}

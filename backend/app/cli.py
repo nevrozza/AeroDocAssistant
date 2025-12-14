@@ -1,28 +1,25 @@
 import asyncio
 
-from app.core import chat, search, config
-from app.core.doc_manager import DocumentManager, DocumentMetadata
+from app.core.doc_manager import DocumentMetadata
+from app.core.container import Container
 
 
 async def main():
-    search.setup()
-    chat_service = chat.ChatService()
-    doc_manager = DocumentManager(config.DATA_FOLDER)
-    doc_manager.load()
+    Container.build()
 
     scope_doc_id = input("Document ID: ")
     scope_doc: DocumentMetadata | None = None
     if scope_doc_id.strip():
-        scope_doc = doc_manager.get_by_id(scope_doc_id)
+        scope_doc = Container.doc_manager.get_by_id(scope_doc_id)
         if not scope_doc:
             raise KeyError(f"Document {scope_doc_id} not found")
 
-    chat_id = await chat_service.create_chat_async(scope_doc)
+    chat_id = await Container.chat_service.create_chat_async(scope_doc)
 
     while True:
         message = input(">>> ")
 
-        invocation = await chat_service.invoke_chat_async(chat_id, message)
+        invocation = await Container.chat_service.invoke_chat_async(chat_id, message)
         async for chunk in invocation:
             print(chunk.text_delta, end="", flush=True)
 
@@ -44,7 +41,7 @@ async def main():
                 continue
             printed_docs.add(source)
 
-            doc = doc_manager.get_by_id(source)
+            doc = Container.doc_manager.get_by_id(source)
             print(f"Использовано: ```{doc.title}```")
 
 

@@ -15,32 +15,33 @@ const ChatPage: FC = () => {
 
     const chatBoxHeight = getChatboxHeight(chatBoxRef);
 
-    return <div className="chat-page">
-        <div className="overlay"><ThemeButton/></div>
+    return (<div>
+        <div className="chat-page">
+            <div className="overlay"><ThemeButton/></div>
+            <MessageContainer chatBoxHeight={chatBoxHeight}>
+                {
+                    (() => {
+                        const elements = [];
+                        for (let i = 1; i <= 60; i++) {
+                            elements.push(<div key={i}>Сообщение{i}</div>);
+                        }
+                        return elements;
+                    })()
+                }
+            </MessageContainer>
+
+            <div className="chat-input-container" ref={chatBoxRef}>
+                <AiChatBox inputRowWidth={inputRowWidth}/>
+            </div>
+
+
+            <div className="highlight-blur">
+            </div>
+        </div>
 
         <TopScrollShadow/>
-
-        <MessageContainer chatBoxHeight={chatBoxHeight}>
-            {
-                (() => {
-                    const elements = [];
-                    for (let i = 1; i <= 50; i++) {
-                        elements.push(<div key={i}>Сообщение{i}</div>);
-                    }
-                    return elements;
-                })()
-            }
-        </MessageContainer>
-
-        <div className="chat-input-container" ref={chatBoxRef}>
-            <AiChatBox inputRowWidth={inputRowWidth}/>
-        </div>
-
         <BottomScrollShadow/>
-
-        <div className="highlight-blur">
-        </div>
-    </div>;
+    </div>);
 };
 
 export default ChatPage;

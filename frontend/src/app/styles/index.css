@@ -1,4 +1,13 @@
 html {
+
+
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+
+
+
     font-family: "Roboto Light", system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     letter-spacing: 0.15px;
@@ -14,7 +23,26 @@ html {
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+
+
+    overflow:hidden;
+    overscroll-behavior: none;
+
+    position: relative;
 }
+
+body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    overscroll-behavior: contain;
+    position: fixed;
+    width: 100%;
+    margin: 0;
+}
+
+
 
 button {
     color: var(--primary);

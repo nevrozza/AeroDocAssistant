@@ -86,7 +86,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
                          opacity: trailingIconVisible ? 1 : 0,
                          transform: `translateX(${trailingIconVisible ? 0 : '10px'})`,
                          pointerEvents: trailingIconVisible ? 'auto' : 'none',
-                         position: 'absolute',
+                         position: trailingIconVisible ? 'initial' : 'absolute',
                          right: 0, // абсолют в правой части
                      }}>
                     <IconButton

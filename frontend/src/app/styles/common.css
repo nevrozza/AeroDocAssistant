@@ -5,11 +5,7 @@
 
 .clickable {
     cursor: pointer;
-}
-
-/* not in .clickable: fix blinking on theme switch */
-.clickable:hover {
-    transition: transform 200ms;
+    transition: var(--theme-transition), transform 200ms;
 }
 
 .clickable:active {

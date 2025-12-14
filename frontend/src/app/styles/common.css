@@ -1,10 +1,15 @@
+
 .hoverable:hover {
     filter: brightness(85%);
 }
 
 .clickable {
-    transition: transform 200ms;
     cursor: pointer;
+}
+
+/* not in .clickable: fix blinking on theme switch */
+.clickable:hover {
+    transition: transform 200ms;
 }
 
 .clickable:active {

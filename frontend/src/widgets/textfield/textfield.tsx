@@ -19,16 +19,16 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
     };
     return (
         <div className="textbox-container" style={{backgroundColor: colors.containerHigh}}>
-            <input 
+            <input
                 ref={props.ref}
-                placeholder="Введите запрос" 
+                placeholder="Введите запрос"
+
                 className="textbox"
                 onChange={handleChange}
-                style={{backgroundColor: colors.containerHigh}}
             />
             {props.trailingIcon && (
                 <div className="trailing-icon">
-                    <IconButton onClick={props.onTrailingIconClick} icon={props.trailingIcon} radius={50}></IconButton>
+                    <IconButton onClick={props.onTrailingIconClick} icon={props.trailingIcon} radius={48}></IconButton>
                 </div>
             )}
         </div>

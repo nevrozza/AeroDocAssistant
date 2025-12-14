@@ -25,7 +25,7 @@ const IconButton: FC<IconButtonProps>
     const iconSize = radius - 20;
 
     return <button className="container hoverable clickable"
-                   style={{width: radius, height: radius, backgroundColor: containerColor}}
+                   style={{width: radius, height: radius, backgroundColor: containerColor, color: iconColor}}
                    onClick={onClick}
     >
         <Icon
@@ -36,7 +36,6 @@ const IconButton: FC<IconButtonProps>
                     opacity: opacity,
                 }
             }
-            color={iconColor}
         />
     </button>
 

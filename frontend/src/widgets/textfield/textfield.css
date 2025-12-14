@@ -1,36 +1,34 @@
-.textbox-container{
+.textbox-container {
     display: flex;
-
     height: 60px;
-    border: 0px;
+
+    border-radius: 100px;
+    width: fit-content;
+}
+
+.textbox {
+    padding-left: 30px;
+    width: fit-content;
+
 
     font-weight: 600;
     font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.15px;
     vertical-align: middle;
-}
-.textbox-container{
-    border-radius: 100px;
-    width: 300px;
-    background-color: black;
-}
-.textbox{
-    border: 0px;
+
+    border: none;
     outline: none;
-    border-top-left-radius: 100px;
-    border-bottom-left-radius: 100px;
-    padding-left: 25px;
-    padding-right: 10px;
-    width: 215px;
-    outline: none;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.15px;
-    vertical-align: middle;
+
+    caret-color: var(--primary);
+    background-color: transparent
 }
-.trailing-icon{
+
+.textbox::placeholder {
+    color: var(--on-background);
+    opacity: .7;
+}
+
+.trailing-icon {
     display: flex;
     align-items: center;
+    padding-right: 10px;
 }

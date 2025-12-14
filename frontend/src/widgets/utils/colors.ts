@@ -26,6 +26,8 @@ export const colors = {
 
     background: 'var(--background)',
     onBackground: 'var(--on-background)',
+
+    outline: 'var(--outline)',
 } as const;
 
 export type ColorsVarKey = keyof typeof colors;

@@ -17,26 +17,36 @@
     z-index: 100;
     display: flex;
     justify-content: center;
-    padding: 20px 0 70px;
+    padding: 20px 0 var(--bottom-chatbox-padding);
 }
+
+.chat-input-container textarea {
+    width: min(700px, (.7 * var(--winner)));
+}
+
 @media (hover: hover) {
-    .chat-input-container {
-        padding: 20px 0 70px;
+    .chat-page {
+        --bottom-chatbox-padding: 70px
     }
 }
 @media (hover: none) {
-    .chat-input-container {
-        padding: 20px 0 30px;
+    .chat-page {
+        --bottom-chatbox-padding: 30px
     }
 }
 
 .chat-messages-container {
+    font-weight: normal;
+    font-size: 15px;
+    letter-spacing: 0;
+    line-height: 20px;
+
     display: flex;
     flex-direction: column;
 
+    width: min(800px, (.8 * var(--winner)));
 
-    justify-items: center;
-    align-items: center;
+    align-self: center;
     scrollbar-color: var(--on-background);
 }
 

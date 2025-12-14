@@ -12,6 +12,7 @@
 
     border: 1px solid var(--primary);
     border-radius: 16px;
+    border-color: var(--outline-variant);
     
     font-weight: 600;
     text-align: center;

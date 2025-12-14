@@ -1,16 +1,15 @@
 import "./chat-page.css"
 import {type FC, useRef} from "react";
-import {useResize} from "../../shared";
 import {AiChatBox, ThemeButton} from "../../components";
 import {BottomScrollShadow, TopScrollShadow} from "./utils/scroll-shadows.tsx";
 import {MessageContainer} from "./utils/message-container.tsx";
 import {getChatboxHeight} from "./utils/get-chatbox-height.ts";
 import {MyMessage, Spacer} from "../../widgets";
+import ResponseMessage from "./response-message/response-message.tsx";
 
 
 const ChatPage: FC = () => {
 
-    const inputRowWidth = Math.min(useResize(parent).width * .7, 700)
 
     const chatBoxRef = useRef<HTMLDivElement>(null);
 
@@ -24,10 +23,10 @@ const ChatPage: FC = () => {
                     (() => {
                         const elements = [];
                         for (let i = 1; i <= 60; i++) {
-                            elements.push(<MyMessage key = {i} text={"Сообщение"+i}/>);
-                            if (i != 60) {
-                                elements.push(<Spacer height = {10}/>)
-                            }
+                            elements.push(<MyMessage key={i} text={"Какие материалы у нас используются?"}/>);
+                            elements.push(<Spacer key={"Spacer" + i} height={10}/>)
+                            elements.push(<ResponseMessage key={"response" + i}/>);
+                            elements.push(<Spacer key={"lastSpacer" + i} height={20}/>)
                         }
                         return elements;
                     })()
@@ -35,7 +34,7 @@ const ChatPage: FC = () => {
             </MessageContainer>
 
             <div className="chat-input-container" ref={chatBoxRef}>
-                <AiChatBox inputRowWidth={inputRowWidth}/>
+                <AiChatBox/>
             </div>
 
 

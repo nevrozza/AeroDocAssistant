@@ -2,4 +2,6 @@
     border-radius: 15px;
     border: 0 solid transparent;
     padding: 10px;
+
+    align-self: end;
 }

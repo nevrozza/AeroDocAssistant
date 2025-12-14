@@ -25,6 +25,9 @@ html {
     --d-background: #141218;
     --d-on-background: #E6E0E9;
 
+    --d-outline: #79747E;
+    --d-outline-variant: #44464F;
+
 
     --l-primary: #485E92;
     --l-on-primary: #FFFFFF;
@@ -51,4 +54,7 @@ html {
 
     --l-background: #FDF7FF;
     --l-on-background: #1D1B20;
+
+    --l-outline: #79747E;
+    --l-outline-variant: #C5C6D0;
 }

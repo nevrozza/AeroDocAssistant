@@ -12,7 +12,7 @@ export const TopScrollShadow = () => {
                 ${colors.background} 0%, 
                 ${colors.transparent} 100%)`,
           pointerEvents: "none", /* Чтобы клики проходили сквозь */
-          zIndex: 5
+          zIndex: 1
       }} />
   )
 }
@@ -28,7 +28,7 @@ export const BottomScrollShadow = () => {
                 ${colors.background} 0%, 
                 ${colors.transparent} 100%)`,
           pointerEvents: "none", /* Чтобы клики проходили сквозь */
-          zIndex: 5
+          zIndex: 1
       }} />
   )
 }

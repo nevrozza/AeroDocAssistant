@@ -1,6 +1,10 @@
+import "./chats-sheet.css"
+
 import React, {type FC} from 'react';
 import type {ChatSheetViewModel} from "./chats-sheet-vm.ts";
-import {SelectButton} from "../../../widgets";
+import {colors, IconButton, SelectButton, Spacer} from "../../../widgets";
+import {LuArrowLeft} from "react-icons/lu";
+import {ThemeButton} from "../../../components";
 
 export interface ChatsSheetProps {
     viewModel: ChatSheetViewModel
@@ -9,10 +13,25 @@ export interface ChatsSheetProps {
 
 const ChatsSheet: FC<ChatsSheetProps> = ({viewModel}) => {
     return (<div className="chats-sheet-container">
-        {viewModel.chats.map((chat) => {
-            return <SelectButton key={chat.chatId} text={chat.chatName} isSelected={chat.chatId === viewModel.pickedId}
-                                 onClick={() => {viewModel.onChatClick(chat.chatId)}}/>
-        }}
+
+        <div className="chats-sheet-header">
+            {/*for mobiles*/}
+            <IconButton icon={LuArrowLeft} containerColor={colors.transparent} enabled={false} opacity={0}/>
+            <div className="chats-sheet-title">
+                AeroDoc
+            </div>
+            <ThemeButton/>
+        </div>
+        <div className="chats-sheet-content">
+            <Spacer height={20}/>
+            {viewModel.chats.map((chat) => (
+                <SelectButton key={chat.chatId} text={chat.chatName} isSelected={chat.chatId === viewModel.pickedId}
+                              onClick={() => {
+                                  viewModel.onChatClick(chat.chatId)
+                              }}/>
+            ))}
+            <Spacer height={20}/>
+        </div>
     </div>)
 }
 

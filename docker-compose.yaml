@@ -16,4 +16,5 @@ services:
     restart: unless-stopped
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
-    command: ["python", "-m", "fastapi", "run", "app/main.py"]
+    entrypoint: ["python", "-m", "fastapi", "run", "app/main.py"]
+#    command: ["--reload"]

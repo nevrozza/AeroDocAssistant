@@ -1,17 +1,26 @@
-import { colors } from "../utils/colors";
+import {colors} from "../utils/colors";
 import "./select-button.css"
 
-interface SelectButtonProps{
+interface SelectButtonProps {
     isSelected?: boolean;
     text?: string;
-    color?: string;
     onClick?: () => void;
     width?: string;
-    height?: string;
 }
 
-const SelectButton = ({isSelected = false, text = "", color = colors.background, onClick, width = "220px", height = "24px"} : SelectButtonProps) => {
-    return <button onClick={onClick} className="button-container hoverable clickable" style={{backgroundColor: !isSelected ? color: colors.primaryContainer, height: height, width: width}}>
+const SelectButton = ({
+                          isSelected = false,
+                          text = "Select me!",
+                          onClick,
+                          width = ""
+                      }: SelectButtonProps) => {
+    return <button onClick={onClick} className="button-container hoverable clickable" style={{
+        backgroundColor: isSelected ? colors.primaryContainer : colors.background,
+        color: isSelected ? colors.onPrimaryContainer : colors.onBackground,
+        width: width,
+        // Тут, т.к. в стилях оно перезаписывается transition clickable и из-за этого выходит не оч(
+        transition: "var(--clickable-transition), color 400ms, background-color 400ms"
+    }}>
         <div className="text-container">{text}</div>
     </button>
 }

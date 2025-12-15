@@ -1,4 +1,4 @@
-import type {IFragment} from "../../../shared/entities/fragment.ts";
+import type {IFragment} from "../../../../shared/entities/fragment.ts";
 import type {IMessagePart} from "./parts/parts.ts";
 
 

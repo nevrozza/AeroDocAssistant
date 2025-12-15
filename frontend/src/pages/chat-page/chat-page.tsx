@@ -2,10 +2,10 @@ import "./chat-page.css"
 import {type FC, useRef} from "react";
 import {AiChatBox, ThemeButton} from "../../components";
 import {BottomScrollShadow, TopScrollShadow} from "./utils/scroll-shadows.tsx";
-import {MessageContainer} from "./utils/message-container.tsx";
+import {MessageContainer} from "./messages-feed/message-container.tsx";
 import {getChatboxHeight} from "./utils/get-chatbox-height.ts";
 import {MyMessage, Spacer} from "../../widgets";
-import ResponseMessage from "./response-message/response-message.tsx";
+import ResponseMessage from "./messages-feed/response-message/response-message.tsx";
 import {useResize} from "../../shared";
 
 

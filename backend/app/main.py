@@ -1,20 +1,12 @@
 from fastapi import FastAPI
 
-PROJECT_NAME = "AeroDocAssistant"
-
-app = FastAPI(title=f"{PROJECT_NAME}")
-
-
-@app.get("/",
-         summary="Статус API",
-         description="Проверка работы API",
-         response_description=f'Возвращает {PROJECT_NAME} работает!"'
-         )
-async def root():
-    return {"message": f"{PROJECT_NAME} работает!"}
+from app.api.chat_router import router as chat_router
+from app.core.container import Container
 
 
-if __name__ == "__main__":
-    import uvicorn
+Container.build()
 
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)
+app = FastAPI()
+
+app.include_router(chat_router)
+

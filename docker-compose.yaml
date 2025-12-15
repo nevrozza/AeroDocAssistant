@@ -1,1 +1,20 @@
-# TODO
+services:
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile
+      target: runtime
+    environment:
+      - DATA_FOLDER=/airdoc/data
+    env_file:
+      - ./backend/.env
+      - ./.env
+    working_dir: /airdoc
+    volumes:
+      - ./backend/app:/airdoc/app
+      - ./backend/data:/airdoc/data
+    restart: unless-stopped
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    entrypoint: ["python", "-m", "fastapi", "run", "app/main.py"]
+#    command: ["--reload"]

@@ -15,4 +15,3 @@ setHtmlTheme()
 setTimeout(() => {
     document.documentElement.style.setProperty("--enable-theme-transitions", "1");
 }, 100);
-

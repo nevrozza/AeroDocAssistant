@@ -51,4 +51,7 @@ html {
 
   --background: light-dark(var(--l-background), var(--d-background));
   --on-background: light-dark(var(--l-on-background), var(--d-on-background));
+
+  --outline: light-dark(var(--l-outline), var(--d-outline));
+  --outline-variant: light-dark(var(--l-outline-variant), var(--d-outline-variant));
 }

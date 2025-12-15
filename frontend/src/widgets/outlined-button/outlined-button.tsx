@@ -25,7 +25,6 @@ const OutlinedButton = ({
             style={{
                 backgroundColor: blury ? colors.transparent : containerColor,
                 color: color,
-                borderColor: colors.containerHighest,
                 backdropFilter: blury ? "blur(10px)" : '',
             }}
     >

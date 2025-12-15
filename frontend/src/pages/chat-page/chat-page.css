@@ -1,24 +1,34 @@
 .chat-page {
+    overflow: hidden;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     position: relative;
     margin-top: 0;
     width: 100%;
-
     height: 100dvh;
 }
 
-
-
-
-.chat-page-overlay {
-    display: flex;
-    flex-direction: row;
-    position: fixed;
-    z-index: 3;
+@media (width < 1200px ) {
+    .desktop-chats-sheet {
+        display: none;
+    }
 }
 
+.chat-content {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+
 .chat-input-container {
+
+    align-self: end;
+
+    position: fixed;
+    z-index: 3;
+
     padding-bottom: var(--bottom-chatbox-padding);
 }
 .chat-messages-container {
@@ -29,23 +39,21 @@
 
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
 
     width: min(800px, (.8 * var(--winner)));
-
-    align-self: center;
     scrollbar-color: var(--on-background);
 }
 
 @media (hover: hover) { /*only for Desktop*/
     .chat-page-highlight-blur {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        justify-self: center;
+
+        align-self: end;
         background-color: var(--primary-container);
-        width: 100%;
-        height: 30px;
+        width: min(700px, (.5 * var(--winner)));
+        height: 20px;
         filter: blur(100px);
 
         border-radius: 30px;

@@ -20,33 +20,30 @@ const ChatPage: FC = () => {
 
     return (<div>
         <div className="chat-page">
-            <MessageContainer chatBoxHeight={chatBoxHeight}>
-                {
-                    (() => {
-                        const elements = [];
-                        for (let i = 1; i <= 60; i++) {
-                            elements.push(<MyMessage key={i} text={"Какие материалы у нас используются?"}/>);
-                            elements.push(<Spacer key={"Spacer" + i} height={10}/>)
-                            elements.push(<ResponseMessage key={"response" + i}/>);
-                            elements.push(<Spacer key={"lastSpacer" + i} height={20}/>)
-                        }
-                        return elements;
-                    })()
-                }
-            </MessageContainer>
-
-
-            <div className="chat-page-overlay">
-                {/*<ThemeButton/>*/}
-                <ChatsSheet viewModel={chatSheetViewModel()}/>
+            <div className="desktop-chats-sheet">
+            <ChatsSheet viewModel={chatSheetViewModel()}/>
+            </div>
+            <div className="chat-content">
+                <MessageContainer chatBoxHeight={chatBoxHeight}>
+                    {
+                        (() => {
+                            const elements = [];
+                            for (let i = 1; i <= 60; i++) {
+                                elements.push(<MyMessage key={i} text={"Какие материалы у нас используются?"}/>);
+                                elements.push(<Spacer key={"Spacer" + i} height={10}/>)
+                                elements.push(<ResponseMessage key={"response" + i}/>);
+                                elements.push(<Spacer key={"lastSpacer" + i} height={20}/>)
+                            }
+                            return elements;
+                        })()
+                    }
+                </MessageContainer>
                 <div className="chat-input-container" ref={chatBoxRef}>
                     <AiChatBox
                         inputRowWidth={Math.min(useResize(parent).width * .7, 700)}/> {/*Не в CSS (см message container): workaround баг, когда пропадает значок микрофона: resizing*/}
                 </div>
-            </div>
 
-
-            <div className="chat-page-highlight-blur">
+                <div className="chat-page-highlight-blur"/>
             </div>
         </div>
 

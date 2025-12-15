@@ -1,10 +1,10 @@
-import React, {type FC} from 'react';
+import {type FC} from 'react';
 import {parseMessage} from "./parse-message.ts";
-import type {IFragment} from "../../../../shared/entities/fragment.ts";
 import {isQuotePart, isTextPart} from "./parts/parts.ts";
 import TextPartComponent from "./parts/text-part-component.tsx";
 import QuotePartComponent from "./parts/quote-part-component.tsx";
 import './response-message.css'
+import type {IFragment} from "../../api/chat-models.ts";
 
 
 export interface ResponseMessageProps {

@@ -1,4 +1,4 @@
-from typing import AsyncGenerator, AsyncIterable
+from typing import AsyncGenerator, AsyncIterable, Iterable
 from dataclasses import dataclass
 from langchain.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage, AnyMessage
 from langchain_core.documents.base import Document
@@ -36,15 +36,17 @@ class AsyncChatInvocation:
             yield chunk
 
 
+class ChatData:
+    chat_id: str
+    title: str
+    history: list[AnyMessage]
+    document: DocumentMetadata | None
+
+
 class ChatService:
 
-    class __ChatData:
-        chat_id: str
-        history: list[AnyMessage]
-        document: DocumentMetadata | None
-
     __llm: ChatOpenAI
-    __chats: dict[str, __ChatData]
+    __chats: dict[str, ChatData]
 
     def __init__(self):
         self.__chats = {}
@@ -101,20 +103,29 @@ class ChatService:
 
         self.__llm = llm.bind_tools([self.__search_tool], tool_choice="auto")
 
-    async def create_chat_async(self, document: DocumentMetadata | None = None) -> str:
-        data = self.__ChatData()
+    def list_chats(self) -> Iterable[ChatData]:
+        return self.__chats.values()
+
+    def get_by_id(self, chat_id: str) -> ChatData | None:
+        return self.__chats.get(chat_id)
+
+    async def create_chat_async(self, document: DocumentMetadata | None = None) -> ChatData:
+        data = ChatData()
         data.chat_id = str(uuid.uuid4())
+        data.title = "Новый чат"
         data.history = await self.__init_new_chat_async(document)
         data.document = document
         self.__chats[data.chat_id] = data
 
-        return data.chat_id
+        return data
 
     async def invoke_chat_async(self, chat_id: str, new_message: str) -> AsyncChatInvocation:
         chat_data = self.__chats.get(chat_id, None)
         if not chat_data:
             raise KeyError(f"Chat {chat_id} does not exist")
 
+        if not chat_data.history:
+            chat_data.title = new_message
         chat_data.history.append(HumanMessage(new_message))
 
         invocation = AsyncChatInvocation()

@@ -31,7 +31,7 @@
     font-weight: 700;
 }
 
-.trailing-icon {
+.textfield-trailing-icon {
     display: flex;
     align-items: center;
     padding-right: 10px;

@@ -1,7 +1,5 @@
-import type {IFragment} from "../../../shared/entities/fragment.ts";
 import type {IMessagePart} from "./parts/parts.ts";
-
-
+import type {IFragment} from "../../api/chat-models.ts";
 
 
 export const parseMessage = (message: string, fragmentMap: Map<string, IFragment>): IMessagePart[] => {

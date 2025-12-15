@@ -9,8 +9,9 @@ html {
 }
 
 .clickable {
+    --clickable-transition: var(--theme-transition), transform 200ms;
     cursor: pointer;
-    transition: var(--theme-transition), transform 200ms;
+    transition: var(--clickable-transition);
 }
 
 .clickable:active {

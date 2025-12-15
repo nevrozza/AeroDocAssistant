@@ -2,7 +2,8 @@ import {ErrorBoundary} from "react-error-boundary";
 import {StrictMode} from "react";
 import {RouterProvider} from "react-router";
 import ErrorFallback, {router} from "./router.tsx";
-import {useResize} from "../shared";
+import {queryClient, useResize} from "../shared";
+import {QueryClientProvider} from "@tanstack/react-query";
 
 export default function App() {
     const {width, height} = useResize(window)
@@ -15,7 +16,9 @@ export default function App() {
     return (
         <StrictMode>
             <ErrorBoundary FallbackComponent={ErrorFallback} onError={(error) => console.error("ss" + error.message)}>
-                <RouterProvider router={router}/>
+                <QueryClientProvider client={queryClient}>
+                    <RouterProvider router={router}/>
+                </QueryClientProvider>
             </ErrorBoundary>
         </StrictMode>
     );

@@ -1,10 +1,14 @@
-FROM python:3.13.11-slim
+# BUILD .VENV
+FROM python:3.13.11-slim AS builder
+WORKDIR /venv_build
+COPY pyproject.toml uv.lock ./
+RUN pip install uv && uv sync
 
-WORKDIR /srv
-COPY . .
 
-RUN pip install uv
-RUN uv sync
+# RUNTIME
+FROM python:3.13.11-slim AS runtime
 
-ENTRYPOINT ["fastapi", "run", "app.main"]
-CMD ["--reload"]
+WORKDIR /airdoc
+COPY --from=builder /venv_build/.venv /airdoc/.venv
+COPY ./app ./app
+ENV PATH="/airdoc/.venv/bin:$PATH"

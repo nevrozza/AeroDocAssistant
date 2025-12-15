@@ -28,8 +28,9 @@ const IconButton: FC<IconButtonProps>
            enabled = true,
        }) => {
 
-    return <button className={enabled ? "container hoverable clickable" : "container"}
-                   style={{width: radius, height: radius, backgroundColor: containerColor, color: iconColor}}
+    return <button className={enabled ? "icon-button-container hoverable clickable" : "icon-button-container"}
+                   style={{width: radius, height: radius, backgroundColor: containerColor, color: iconColor,
+                   transition: "var(--clickable-transition), color 600ms"}}
                    onClick={enabled ? onClick : undefined}
     >
         <Icon

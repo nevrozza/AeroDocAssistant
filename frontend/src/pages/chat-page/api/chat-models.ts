@@ -4,3 +4,8 @@ export interface IFragment {
     sourceId: string;
     sourcePage: number;
 }
+
+export interface IChatMetadata {
+    id: string;
+    title: string;
+}

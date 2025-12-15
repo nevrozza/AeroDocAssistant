@@ -8,6 +8,7 @@ interface OutlinedButtonProps {
     color?: string;
     icon?: Icon;
     blury?: boolean;
+    width?: number | string;
     onClick?: () => void;
 }
 
@@ -16,16 +17,18 @@ const OutlinedButton = ({
                             containerColor = colors.background,
                             color = colors.onBackground,
                             icon: Icon,
-                            blury = false, // TODO
+                            blury = false,
+                            width = '',
                             onClick = () => null,
                         }: OutlinedButtonProps) => (
 
-    <button className="button-container hoverable clickable"
+    <button className="outlined-button-container hoverable clickable"
             onClick={onClick}
             style={{
                 backgroundColor: blury ? colors.transparent : containerColor,
                 color: color,
                 backdropFilter: blury ? "blur(10px)" : '',
+                width: width,
             }}
     >
         {Icon && (

@@ -1,11 +1,19 @@
-
 services:
-
   backend:
-    build: ./backend
-    volumes:
-      - ./backend/app:/srv/app
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile
+      target: runtime
+    environment:
+      - DATA_FOLDER=/airdoc/data
     env_file:
-      - backend/.env
+      - ./backend/.env
+      - ./.env
+    working_dir: /airdoc
+    volumes:
+      - ./backend/app:/airdoc/app
+      - ./backend/data:/airdoc/data
+    restart: unless-stopped
     ports:
-      - "8000:8000"
+      - ${SERVER_PORT}:${SERVER_PORT}
+    command: ["python", "-m", "fastapi", "run", "app/main.py"]

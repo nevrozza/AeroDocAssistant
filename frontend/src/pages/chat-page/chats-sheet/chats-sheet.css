@@ -1,3 +1,4 @@
+
 .chats-sheet-container {
     position: relative;
     display: flex;
@@ -5,11 +6,17 @@
     border: 1px solid var(--outline-variant);
     border-radius: 40px;
     margin: 20px;
-    padding: 20px 0px 0;
-    width: clamp(300px, calc(.3 * 100vw) , 400px);
+    padding: 20px 0 0;
+    width: clamp(300px, calc(.3 * 100vw), 350px);
     height: calc(100vh - 40px);
     box-sizing: border-box;
     overflow: hidden;
+
+}
+.chats-sheet-create-button {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    align-self: center;
 }
 
 .chats-sheet-header {

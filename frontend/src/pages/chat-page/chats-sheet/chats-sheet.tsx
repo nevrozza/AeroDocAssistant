@@ -1,9 +1,9 @@
 import "./chats-sheet.css"
 
-import React, {type FC} from 'react';
+import {type FC} from 'react';
 import type {ChatSheetViewModel} from "./chats-sheet-vm.ts";
-import {colors, IconButton, SelectButton, Spacer} from "../../../widgets";
-import {LuArrowLeft} from "react-icons/lu";
+import {colors, IconButton, OutlinedButton, SelectButton, Spacer} from "../../../widgets";
+import {LuArrowLeft, LuPlus} from "react-icons/lu";
 import {ThemeButton} from "../../../components";
 
 export interface ChatsSheetProps {
@@ -12,8 +12,8 @@ export interface ChatsSheetProps {
 
 
 const ChatsSheet: FC<ChatsSheetProps> = ({viewModel}) => {
-    return (<div className="chats-sheet-container">
-
+    return (
+        <div className="chats-sheet-container">
         <div className="chats-sheet-header">
             {/*for mobiles*/}
             <IconButton icon={LuArrowLeft} containerColor={colors.transparent} enabled={false} opacity={0}/>
@@ -21,6 +21,9 @@ const ChatsSheet: FC<ChatsSheetProps> = ({viewModel}) => {
                 AeroDoc
             </div>
             <ThemeButton/>
+        </div>
+        <div className="chats-sheet-create-button">
+            <OutlinedButton text="Новый чат" icon={LuPlus} width={"250px"} onClick={viewModel.onCreateChatClick}/>
         </div>
         <div className="chats-sheet-content">
             <Spacer height={20}/>

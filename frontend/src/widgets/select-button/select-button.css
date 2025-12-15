@@ -1,0 +1,18 @@
+.button-container{
+    border: 0px;
+    border-radius: 18px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.5px;
+}
+.text-container{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

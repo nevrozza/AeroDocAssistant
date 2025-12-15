@@ -20,10 +20,6 @@
     padding: 20px 0 var(--bottom-chatbox-padding);
 }
 
-.chat-input-container textarea {
-    width: min(700px, (.7 * var(--winner)));
-}
-
 @media (hover: hover) {
     .chat-page {
         --bottom-chatbox-padding: 70px

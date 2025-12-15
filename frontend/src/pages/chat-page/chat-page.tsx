@@ -6,6 +6,7 @@ import {MessageContainer} from "./utils/message-container.tsx";
 import {getChatboxHeight} from "./utils/get-chatbox-height.ts";
 import {MyMessage, Spacer} from "../../widgets";
 import ResponseMessage from "./response-message/response-message.tsx";
+import {useResize} from "../../shared";
 
 
 const ChatPage: FC = () => {
@@ -14,6 +15,7 @@ const ChatPage: FC = () => {
     const chatBoxRef = useRef<HTMLDivElement>(null);
 
     const chatBoxHeight = getChatboxHeight(chatBoxRef);
+    const inputRowWidth = Math.min(useResize(parent).width * .7, 700) // Не в CSS (см message container): workaround баг, когда пропадает значок микрофона: resizing
 
     return (<div>
         <div className="chat-page">
@@ -34,7 +36,8 @@ const ChatPage: FC = () => {
             </MessageContainer>
 
             <div className="chat-input-container" ref={chatBoxRef}>
-                <AiChatBox/>
+                <AiChatBox
+                    inputRowWidth={inputRowWidth}/> {/*Не в CSS (см message container): workaround баг, когда пропадает значок микрофона: resizing*/}
             </div>
 
 

@@ -1,6 +1,3 @@
-
-# https://github.com/shaharv/docker/blob/master/alpine/onnxruntime/Dockerfile
-
 # BUILD .VENV
 FROM python:3.13.11-slim AS builder
 WORKDIR /venv_build

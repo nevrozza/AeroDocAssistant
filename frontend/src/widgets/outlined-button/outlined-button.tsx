@@ -20,7 +20,7 @@ const OutlinedButton = ({
                             onClick = () => null,
                         }: OutlinedButtonProps) => (
 
-    <button className="button-container hoverable clickable"
+    <button className="outlined-button-container hoverable clickable"
             onClick={onClick}
             style={{
                 backgroundColor: blury ? colors.transparent : containerColor,

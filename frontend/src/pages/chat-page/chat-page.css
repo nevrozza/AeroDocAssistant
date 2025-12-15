@@ -50,13 +50,13 @@
     scrollbar-color: var(--on-background);
 }
 
-.overlay {
+.chat-page-overlay {
     position: fixed;
     z-index: 99;
 }
 
 @media (hover: hover) {
-    .highlight-blur {
+    .chat-page-highlight-blur {
         position: fixed;
         bottom: 0;
         left: 0;

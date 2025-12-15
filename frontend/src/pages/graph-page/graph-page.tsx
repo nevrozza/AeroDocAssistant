@@ -13,7 +13,7 @@ const GraphPage = ({edges}: GraphPageProps) =>{
         {id: "3", label: "third"}
     ]
     
-    return <div className='container'><GraphCanvas edges={edges} nodes={nodes}></GraphCanvas></div>
+    return <div className='graph-container'><GraphCanvas edges={edges} nodes={nodes}></GraphCanvas></div>
 
 }
 

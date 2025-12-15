@@ -17,7 +17,7 @@ const ChatPage: FC = () => {
 
     return (<div>
         <div className="chat-page">
-            <div className="overlay"><ThemeButton/></div>
+            <div className="chat-page-overlay"><ThemeButton/></div>
             <MessageContainer chatBoxHeight={chatBoxHeight}>
                 {
                     (() => {
@@ -38,7 +38,7 @@ const ChatPage: FC = () => {
             </div>
 
 
-            <div className="highlight-blur">
+            <div className="chat-page-highlight-blur">
             </div>
         </div>
 

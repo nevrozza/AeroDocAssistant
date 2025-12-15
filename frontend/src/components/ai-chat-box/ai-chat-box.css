@@ -10,14 +10,14 @@
     margin: 0 auto; /* Центрирование всего блока */
 }
 
-.input-row {
+.ai-chat-box-input-row {
     display: flex;
     align-items: end;
     gap: 10px;
 }
 
 
-.textfield-wrapper {
+.ai-chat-box-textfield-wrapper {
     flex: 1; /* Поле ввода растягивается */
     min-width: 0; /* Важно для правильного сжатия в flex контейнере */
 }

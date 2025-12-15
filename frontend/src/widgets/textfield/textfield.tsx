@@ -82,7 +82,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
                 }}
             />
             {props.trailingIcon && (
-                <div className="trailing-icon"
+                <div className="textfield-trailing-icon"
                      style={{
                          transition: 'all 0.3s ease',
                          opacity: trailingIconVisible ? 1 : 0,

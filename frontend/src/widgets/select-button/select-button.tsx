@@ -14,14 +14,14 @@ const SelectButton = ({
                           onClick,
                           width = ""
                       }: SelectButtonProps) => {
-    return <button onClick={onClick} className="button-container hoverable clickable" style={{
+    return <button onClick={onClick} className="select-button-container hoverable clickable" style={{
         backgroundColor: isSelected ? colors.primaryContainer : colors.background,
         color: isSelected ? colors.onPrimaryContainer : colors.onBackground,
         width: width,
         // Тут, т.к. в стилях оно перезаписывается transition clickable и из-за этого выходит не оч(
         transition: "var(--clickable-transition), color 400ms, background-color 400ms"
     }}>
-        <div className="text-container">{text}</div>
+        <div className="select-button-text">{text}</div>
     </button>
 }
 

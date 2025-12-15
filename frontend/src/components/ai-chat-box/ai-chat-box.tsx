@@ -17,8 +17,8 @@ const AiChatBox = () => {
         <div>
             <div className="ai-chat-box">
                 <OutlinedButton text={"Граф знаний"} icon={LuSlack} blury={true}/>
-                <div className="input-row">
-                    <div className="textfield-wrapper">
+                <div className="ai-chat-box-input-row">
+                    <div className="ai-chat-box-textfield-wrapper">
                         <TextField ref={viewModel.textFieldRef} trailingIcon={LuMic} trailingIconHidable={true}
                                    maxLines={15} onChange={(event) => {
                             setInputBlank(StringUtils.isBlank(event.target.value));

@@ -14,7 +14,7 @@ async def main():
         if not scope_doc:
             raise KeyError(f"Document {scope_doc_id} not found")
 
-    chat_id = await Container.chat_service.create_chat_async(scope_doc)
+    chat_id = (await Container.chat_service.create_chat_async(scope_doc)).chat_id
 
     while True:
         message = input(">>> ")

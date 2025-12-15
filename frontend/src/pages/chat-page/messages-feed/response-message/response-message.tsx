@@ -18,8 +18,8 @@ const exampleFragments: IFragment[] = [
     {
         id: "e0c5ca62-7aa4-4b95-983e-5bc067d545a1",
         text: "Планер самолета Boeing 787 более чем на 50% по весу состоит из композитных материалов, в основном  углепластика",
-        sourceId: "source-123",
-        sourcePage: 1
+        documentId: "source-123",
+        documentPage: 1
     }
 ];
 

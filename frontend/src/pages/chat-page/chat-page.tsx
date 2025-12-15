@@ -9,19 +9,25 @@ import ResponseMessage from "./messages-feed/response-message/response-message.t
 import {useResize} from "../../shared";
 import ChatsSheet from "./chats-sheet/chats-sheet.tsx";
 import chatSheetViewModel from "./chats-sheet/chats-sheet-vm.ts";
+import {useParams} from "react-router-dom";
+import chatPageViewModel from "./chat-page-vm.ts";
 
 
 const ChatPage: FC = () => {
-
-
     const chatBoxRef = useRef<HTMLDivElement>(null);
+
+
+    const {chatId} = useParams<{ chatId?: string }>();
+
+    const viewModel = chatPageViewModel(chatId)
+    const chatsSheetViewModel = chatSheetViewModel(chatId)
 
     const chatBoxHeight = getChatboxHeight(chatBoxRef);
 
     return (<div>
         <div className="chat-page">
             <div className="desktop-chats-sheet">
-                <ChatsSheet viewModel={chatSheetViewModel()}/>
+                <ChatsSheet viewModel={chatsSheetViewModel}/>
             </div>
             <div className="chat-content">
                 <div className="chat-messages-scroll-wrapper">

@@ -1,40 +1,42 @@
-import {useState} from "react";
 import {useQuery} from '@tanstack/react-query';
 import {ChatService} from "../api/chat-service.ts";
 import type {IChatMetadata} from "../api/chat-models.ts";
+import {useNavigate} from "react-router-dom";
 
 export interface ChatSheetViewModel {
     chats: IChatMetadata[];
-    pickedId: string;
+    pickedId?: string;
     onChatClick: (id: string) => void;
-    onCreateChatClick: () => void;
+    createChat: () => void;
 }
 
-// TODO
-const chatSheetViewModel = (chatService: ChatService = new ChatService()): ChatSheetViewModel => {
-
+const chatSheetViewModel = (chatId?: string, chatService: ChatService = new ChatService()): ChatSheetViewModel => {
+    const navigate = useNavigate();
 
     const useChats = useQuery({
-        queryKey: ['chats', 'metadata'], // Ключ для кэширования
+        queryKey: ['chats', 'metadata'],
         queryFn: chatService.fetchChatMetadataList,
         retry: 2
     });
 
-    const [pickedId, setPickedId] = useState<string>("") // it's ok if not null?
-
     const onChatClick = (id: string): void => {
-        setPickedId(id);
+        navigateToChat(id)
     }
 
-    const onCreateChatClick = (): void => {
-        setPickedId("new-id")
+    const createChat = (): void => {
+        const newChatId = 'new'
+        navigateToChat(newChatId)
+    }
+
+    const navigateToChat = (id: string): void => {
+        navigate(`/chats/${id}`, {replace: chatId == null});
     }
 
     return {
         chats: useChats.data ? useChats.data : [],
-        pickedId: pickedId,
+        pickedId: chatId,
         onChatClick: onChatClick,
-        onCreateChatClick: onCreateChatClick
+        createChat: createChat
     }
 }
 export default chatSheetViewModel

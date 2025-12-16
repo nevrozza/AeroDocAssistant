@@ -4,6 +4,7 @@ import {StringUtils} from './utils/string-utils.ts'
 import {useResize} from "./utils/use-resize.ts"
 import {apiClient} from "./api/client.ts";
 import {queryClient} from "./api/query-client.ts";
+import {navigateToChat} from "./utils/navigate-to-chat.ts";
 // import type {ApiResponse} from "./api/api-utils.ts";
 
-export {setHtmlTheme, StringUtils, useResize, apiClient, queryClient}
+export {setHtmlTheme, StringUtils, useResize, apiClient, queryClient, navigateToChat}

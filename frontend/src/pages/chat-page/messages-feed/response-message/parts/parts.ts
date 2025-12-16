@@ -6,7 +6,8 @@ export interface ITextPart {
 
 export interface IQuotePart {
     quote: string;
-    fragment: IFragment
+    fragment?: IFragment,
+    documentTitle?: string;
 }
 
 export type IMessagePart = ITextPart | IQuotePart;

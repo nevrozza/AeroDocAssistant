@@ -7,7 +7,7 @@ export interface MessageContainerProps {
 
 export const MessageContainer: FC<PropsWithChildren<MessageContainerProps>> = (props) => {
     return (<div className="chat-messages-container">
-        <Spacer height={100}/>
+        <Spacer height={50}/>
         {props.children}
         <Spacer height={`calc(${props.chatBoxHeight}px + var(--bottom-chatbox-padding))`}/>
     </div>)

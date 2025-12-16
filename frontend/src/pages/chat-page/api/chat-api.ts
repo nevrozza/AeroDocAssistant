@@ -8,5 +8,9 @@ export const chatApi = {
 
     fetchChatContent: async (chatId: string): Promise<ChatContentDTO> => {
         return (await apiClient.get(`/chat/${chatId}/`)).data
+    },
+
+    createChat: async (): Promise<ChatMetadataDTO> => {
+        return (await apiClient.post(`/chat/create`)).data
     }
 }

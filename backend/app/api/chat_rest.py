@@ -1,40 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, UUID4
-from typing import Literal
+from pydantic import UUID4
 
 from app.core.container import Container
+from app.api.schemas import ChatMetadataSchema, ChatContentSchema, MessageSchema, DocumentSchema
+from app.core.chat import ChatData
 
 
 router = APIRouter(prefix="/chat")
-
-
-class DocumentSchema(BaseModel):
-    document_id: UUID4
-    title: str
-
-
-class FragmentSchema(BaseModel):
-    fragment_id: UUID4
-    text: str
-    source: UUID4
-    source_page: int
-
-
-class MessageSchema(BaseModel):
-    role: Literal["user", "assistant"]
-    text: str
-    used_fragments: list[UUID4]
-
-
-class ChatMetadataSchema(BaseModel):
-    chat_id: UUID4
-    title: str
-
-
-class ChatContentSchema(ChatMetadataSchema):
-    messages: list[MessageSchema]
-    used_fragments: list[FragmentSchema]
-    used_documents: list[DocumentSchema]
 
 
 @router.get("/list/", response_model=list[ChatMetadataSchema])
@@ -49,10 +21,19 @@ async def list_chats() -> list[ChatMetadataSchema]:
 async def create_chat() -> ChatMetadataSchema:
     chat = await Container.chat_service.create_chat_async()
 
-    # для тестов
-    from langchain.messages import HumanMessage, AIMessage
-    chat.history.append(HumanMessage("Первый вопрос?"))
-    chat.history.append(AIMessage("Какой-то ответ"))
+    return ChatMetadataSchema(
+        chat_id=chat.chat_id,
+        title=chat.title,
+    )
+
+
+@router.get("/")
+async def get_chat_by_filter(document: UUID4) -> ChatMetadataSchema:
+    meta = Container.doc_manager.get_by_id(str(document))
+    if not meta:
+        raise HTTPException(404, detail=f"Document {document} not found")
+
+    chat = await Container.chat_service.get_document_chat_async(meta)
 
     return ChatMetadataSchema(
         chat_id=chat.chat_id,

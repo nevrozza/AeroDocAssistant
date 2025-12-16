@@ -1,17 +1,18 @@
 import "./ai-chat-box.css";
-import aiChatBoxViewModel, {type AIChatBoxViewModel} from "./ai-chat-box-vm.ts";
+import {type AIChatBoxViewModel} from "./ai-chat-box-vm.ts";
 import {colors, IconButton, OutlinedButton, TextField} from "../../widgets";
 import {LuMic, LuSend, LuSlack} from "react-icons/lu";
 import {useState} from "react";
 import {StringUtils} from "../../shared";
 
 export interface AIChatBoxProps {
-    inputRowWidth?: number
+    inputRowWidth?: number,
+    viewModel: AIChatBoxViewModel,
 }
 
 
 const AiChatBox = (props: AIChatBoxProps) => {
-    const viewModel: AIChatBoxViewModel = aiChatBoxViewModel();
+    const viewModel: AIChatBoxViewModel = props.viewModel;
 
     const [inputBlank, setInputBlank] = useState<boolean>(true)
 

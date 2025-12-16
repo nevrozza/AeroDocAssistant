@@ -6,7 +6,7 @@ export class ChatService {
     async fetchChatMetadataList(): Promise<IChatMetadata[]> {
         try {
             const chatMetadataDTOs = await chatApi.fetchChatMetadataList();
-            return chatMetadataDTOs.map(ChatMapper.metadataToDomain)
+            return chatMetadataDTOs.reverse().map(ChatMapper.metadataToDomain)
         } catch (error: any) {
             throw new Error(`Failed to fetch chatList: ${error.message}`);
         }
@@ -18,6 +18,15 @@ export class ChatService {
             return ChatMapper.contentToDomain(chatContentDTO);
         } catch (error: any) {
             throw new Error(`Failed to fetch chatContent: ${error.message}`);
+        }
+    }
+
+    async createChat(): Promise<IChatMetadata> {
+        try {
+            const chatMetadataDTO = await chatApi.createChat();
+            return ChatMapper.metadataToDomain(chatMetadataDTO);
+        } catch (error: any) {
+            throw new Error(`Failed to create chat: ${error.message}`);
         }
     }
 }

@@ -1,16 +1,19 @@
 
-import { useEffect, useRef, useCallback } from 'react';
+import {useEffect, useRef, useCallback, useState} from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChatWebSocketService } from './chat-websocket-service.ts';
+import {ChatWebSocketService, WebSocketEventType} from './chat-websocket-service.ts';
 import type { IChatContent } from '../chat-models.ts';
 
-export const useChatWebSocket = (chatId?: string) => {
+const useChatWebSocket = (chatId?: string) => {
     const queryClient = useQueryClient();
     const wsServiceRef = useRef<ChatWebSocketService | null>(null);
+    const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
         if (!chatId) {
             wsServiceRef.current?.disconnect();
+            wsServiceRef.current = null;
+            setIsReady(false)
             return;
         }
 
@@ -18,7 +21,24 @@ export const useChatWebSocket = (chatId?: string) => {
             wsServiceRef.current = new ChatWebSocketService();
         }
 
+        const handleConnected = () => {
+            setIsReady(true);
+        };
+
+        const handleDisconnected = () => {
+            setIsReady(false);
+        };
+
         const wsService = wsServiceRef.current;
+
+
+        wsService.addEventHandler((event) => {
+            if (event.type === WebSocketEventType.CONNECTED) {
+                handleConnected();
+            } else if (event.type === WebSocketEventType.DISCONNECTED) {
+                handleDisconnected();
+            }
+        });
 
         wsService.setChatUpdateHandler((setNewData) => {
             queryClient.setQueryData<IChatContent>(
@@ -26,35 +46,27 @@ export const useChatWebSocket = (chatId?: string) => {
                 setNewData
             );
         });
-
+        console.log("connect to:", chatId);
         wsService.connect(chatId);
 
+
         return () => {
+            console.log("disconnect from:", chatId);
             wsService.disconnect();
         };
     }, [chatId, queryClient]);
 
     const sendMessage = useCallback((text: string) => {
+        console.log('sendMessage', chatId, text);
         if (!chatId || !wsServiceRef.current) {
-            throw new Error('WebSocket is not ready');
+            throw new Error(`WebSocket is not ready ${chatId}`);
         }
         queryClient.setQueryData<IChatContent>(
             ['chats', 'content', chatId],
             (oldData) => {
-                // TODO: Создать чат + navigation + обновить меню слева
                 if (!oldData) {
-                    return {
-                        chatId,
-                        title: 'Новый чат',
-                        messages: [{
-                            isMine: true,
-                            text,
-                            usedFragments: []
-                        }],
-                        usedDocuments: []
-                    };
+                    return;
                 }
-
                 return {
                     ...oldData,
                     messages: [
@@ -74,6 +86,8 @@ export const useChatWebSocket = (chatId?: string) => {
 
     return {
         sendMessage,
-        isConnected: wsServiceRef.current?.isConnected() || false
+        isConnected: wsServiceRef.current?.isConnected() || false,
+        isReady: isReady
     };
 };
+export default useChatWebSocket

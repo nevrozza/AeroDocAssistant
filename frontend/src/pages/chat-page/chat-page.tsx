@@ -18,14 +18,12 @@ const ChatPage: FC = () => {
 
     const {chatId} = useParams<{ chatId?: string }>();
 
-    const viewModel = chatPageViewModel(chatId)
     const chatsSheetViewModel = chatSheetViewModel(chatId)
+    const viewModel = chatPageViewModel(chatId, chatsSheetViewModel.refetchChats)
 
     const chatBoxHeight = getChatboxHeight(chatBoxRef);
 
     const handleSendMessage = (text: string) => {
-        // already validated!!
-        if (!chatId) return;
         try {
             viewModel.sendMessage(text);
         } catch (error) {

@@ -1,19 +1,16 @@
 import { GraphCanvas } from 'reagraph';
 import "./graph-page.css"
+import { graphApi } from '../chat-page/api/graph-api';
+import { useState } from 'react';
+import type { GraphData } from '../chat-page/api/graph-dtos';
 
 
-interface GraphPageProps{
-    edges: Array<{id: string, target: string, source: string, label: string}>
-}
+const GraphPage = () =>{
+    const [graph, setGraph] = useState<GraphData>({ nodes: [], edges: [] });
 
-const GraphPage = ({edges}: GraphPageProps) =>{
-    const nodes = [
-        {id: "1", label: "first"},
-        {id: "2", label: "second"},
-        {id: "3", label: "third"}
-    ]
+    graphApi.getGraph().then(data => {setGraph(data)})
     
-    return <div className='graph-container'><GraphCanvas edges={edges} nodes={nodes}></GraphCanvas></div>
+    return <div className='graph-container'><GraphCanvas edges={graph.edges} nodes={graph.nodes}></GraphCanvas></div>
 
 }
 

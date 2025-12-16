@@ -8,6 +8,7 @@ import {StringUtils} from "../../shared";
 interface TextFieldProps {
     ref: RefObject<HTMLTextAreaElement | null>;
     onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
     trailingIcon?: Icon;
     trailingIconHidable?: boolean;
     onTrailingIconClick?: () => void;
@@ -70,6 +71,7 @@ const TextField: FC<TextFieldProps> = (props: TextFieldProps) => {
         <div className="textbox-container" style={{backgroundColor: colors.containerHigh, borderRadius: borderRadius, width: props.width}}>
             <textarea
                 ref={props.ref}
+                onKeyDown={props.onKeyDown}
                 placeholder={props.placeholder || "Введите запрос"}
                 className="textbox"
                 onChange={handleChange}

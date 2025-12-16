@@ -141,7 +141,7 @@ class ChatService:
         if not chat_data:
             raise KeyError(f"Chat {chat_id} does not exist")
 
-        if not chat_data.history:
+        if chat_data.title == "Новый чат":
             chat_data.title = new_message
         chat_data.history.append(HumanMessage(new_message))
 

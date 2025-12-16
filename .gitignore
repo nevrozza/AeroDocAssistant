@@ -1,5 +1,4 @@
 # Editor directories and files
-.env
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -9,3 +8,5 @@
 *.njsproj
 *.sln
 *.sw?
+.env
+.venv/

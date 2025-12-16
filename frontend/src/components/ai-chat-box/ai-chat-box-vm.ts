@@ -6,7 +6,7 @@ export interface AIChatBoxViewModel {
     textFieldRef: RefObject<HTMLTextAreaElement | null>
 }
 
-const aiChatBoxViewModel = (): AIChatBoxViewModel => {
+const aiChatBoxViewModel = (onSend: (text: string) => void): AIChatBoxViewModel => {
 
     const textFieldRef = useRef<HTMLTextAreaElement>(null);
 
@@ -15,7 +15,7 @@ const aiChatBoxViewModel = (): AIChatBoxViewModel => {
         if (StringUtils.isBlank(text)) {
             return;
         }
-        console.log('onSendClick', text);
+        onSend(text!!)
     }
 
     return {onSendClick: onSendClick, textFieldRef: textFieldRef}

@@ -118,10 +118,17 @@ class ChatService:
     def get_by_id(self, chat_id: str) -> ChatData | None:
         return self.__chats.get(chat_id)
 
+    async def get_document_chat_async(self, document: DocumentMetadata) -> ChatData:
+        for chat in self.__chats.values():
+            if chat.document.doc_id == document.doc_id:
+                return chat
+
+        return await self.create_chat_async(document)
+
     async def create_chat_async(self, document: DocumentMetadata | None = None) -> ChatData:
         data = ChatData()
         data.chat_id = str(uuid.uuid4())
-        data.title = "Новый чат"
+        data.title = "Новый чат" if not document else document.title
         data.history = await self.__init_new_chat_async(document)
         data.document = document
         self.__chats[data.chat_id] = data
@@ -256,6 +263,6 @@ class ChatService:
             prev_text = ''
             async for chunk in self.__llm.astream(history):
                 yield self.__to_llmchunk(chunk, invocation, prev_text)
-                prev_text = chunk.text
+                prev_text += chunk.text
         else:
             yield self.__to_llmchunk(response, invocation, '')

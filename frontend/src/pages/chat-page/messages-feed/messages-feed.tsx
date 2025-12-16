@@ -1,4 +1,4 @@
-import type {IMessage} from "../api/chat-models.ts";
+import type {IDocument, IMessage} from "../api/chat-models.ts";
 import type {FC} from "react";
 import {MyMessage, Spacer} from "../../../widgets";
 import ResponseMessage from "./response-message/response-message.tsx";
@@ -7,10 +7,11 @@ import React from "react";
 
 export interface MessageFeedProps {
     messages: IMessage[] | undefined;
+    documents: IDocument[];
     chatBoxHeight: number
 }
 
-const MessagesFeed: FC<MessageFeedProps> = ({messages, chatBoxHeight}) => {
+const MessagesFeed: FC<MessageFeedProps> = ({messages, documents, chatBoxHeight}) => {
     if (!messages) {
         return <div>loading</div>
     } else {
@@ -27,7 +28,7 @@ const MessagesFeed: FC<MessageFeedProps> = ({messages, chatBoxHeight}) => {
                             )
                         } else {
                             return <React.Fragment key={index}>
-                                <ResponseMessage key={index} message={message}/>
+                                <ResponseMessage key={index} message={message} documents={documents}/>
                                 <Spacer key={"Spacer"+index} height={20}/>
                             </React.Fragment>
                         }

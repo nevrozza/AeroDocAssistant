@@ -37,7 +37,8 @@ const ChatPage: FC = () => {
                 <ChatsSheet viewModel={chatsSheetViewModel}/>
             </div>
             <div className="chat-content">
-                {chatId ? <MessagesFeed chatBoxHeight={chatBoxHeight} messages={viewModel.chatContent?.messages}/> :
+                {chatId ? <MessagesFeed chatBoxHeight={chatBoxHeight} messages={viewModel.chatContent?.messages}
+                                        documents={viewModel.chatContent?.usedDocuments || []}/> :
                     <div>New chat</div>
                 }
                 <div className="chat-input-container" ref={chatBoxRef}>

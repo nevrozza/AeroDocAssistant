@@ -1,5 +1,5 @@
 import type {ITextPart} from "./parts.ts";
-import './part-component.css'
+import './text-part.css'
 import type {FC} from "react";
 import Markdown from "react-markdown";
 

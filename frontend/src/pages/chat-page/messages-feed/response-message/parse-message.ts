@@ -1,8 +1,10 @@
 import type {IMessagePart} from "./parts/parts.ts";
-import type {IFragment} from "../../api/chat-models.ts";
+import type {IDocument, IFragment} from "../../api/chat-models.ts";
 
 
-export const parseMessage = (message: string, fragmentMap: Map<string, IFragment>): IMessagePart[] => {
+export const parseMessage = (initMessage: string, fragmentMap: Map<string, IFragment>, documentsMap: Map<string, IDocument>): IMessagePart[] => {
+
+    const message = initMessage.replace(/}}}./g, "}}}")
     const result: IMessagePart[] = [];
 
     // Улучшенная регулярка с именованными группами
@@ -29,12 +31,12 @@ export const parseMessage = (message: string, fragmentMap: Map<string, IFragment
             }
         }
 
-        // Обработка цитаты
         const fragment = fragmentMap.get(fragmentId);
-
+        const document =  fragment?.documentId ? documentsMap.get(fragment?.documentId) : null;
         result.push({
             quote: quoteText.trim(),
-            fragment: fragment
+            fragment: fragment,
+            documentTitle: document?.title
         });
 
 

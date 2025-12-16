@@ -95,6 +95,9 @@ export class ChatWebSocketService {
         switch (data.event_type) {
             case "MESSAGE_CHUNK":
                 const chunkText: string = data.chunk_text
+
+                console.log("fragments:", data.new_fragments)
+
                 const newFragments = (data.new_fragments as FragmentDTO[]).map(ChatMapper.fragmentToDomain)
                 const newDocuments = (data.new_documents as DocumentDTO[]).map(ChatMapper.documentToDomain)
                 this.handleMessageChunk(chunkText, newFragments, newDocuments);

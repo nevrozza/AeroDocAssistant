@@ -46,7 +46,6 @@
     line-height: 20px;
     display: flex;
     flex-direction: column;
-
 }
 
 
@@ -57,7 +56,7 @@
     }
 
     .chat-messages-container {
-        padding: 0 15px;
+        width: calc(var(--winner) - 15px);
         max-width: min(800px, calc(var(--winner)));
     }
 }

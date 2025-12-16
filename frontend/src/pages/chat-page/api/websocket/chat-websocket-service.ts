@@ -25,7 +25,7 @@ export class ChatWebSocketService {
 
     connect(chatId: string): void {
         this.disconnect();
-        this.ws = new WebSocket(`ws://localhost:8000/chat/${chatId}`); // TODO
+        this.ws = new WebSocket(`ws://10.10.167.118:8000/chat/${chatId}`); // TODO
 
         this.ws.onopen = () => {
             this.notifyEventHandlers({ type: WebSocketEventType.CONNECTED });

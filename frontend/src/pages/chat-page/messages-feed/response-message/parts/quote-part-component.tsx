@@ -4,7 +4,7 @@ import './quote-part.css'
 import type {FC} from "react";
 import Markdown from "react-markdown";
 import { useState, useRef } from "react";
-import {IconButton} from "../../../../../widgets";
+import {colors, IconButton} from "../../../../../widgets";
 import {LuFile} from "react-icons/lu";
 
 interface QuotePartComponentProps {
@@ -84,7 +84,7 @@ const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num}) => {
                     </div>
 
                     <div className="quote-part-file">
-                        <IconButton icon={LuFile}/>
+                        <IconButton icon={LuFile} containerColor={colors.primaryContainer} iconColor={colors.onPrimaryContainer} iconSize={24}/>
                     </div>
                 </div>
             )}

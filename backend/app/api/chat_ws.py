@@ -3,6 +3,7 @@ from pydantic import BaseModel, UUID4
 from enum import Enum
 import traceback
 
+from api.schemas import FragmentSchema, DocumentSchema
 from app.core.container import Container
 
 
@@ -31,6 +32,8 @@ class OutgoingErrorEvent(BaseModel):
 class OutgoingMessageChunkEvent(BaseModel):
     event_type: OutgoingEventType = OutgoingEventType.MESSAGE_CHUNK
     chunk_text: str
+    new_fragments: list[FragmentSchema]
+    new_documents: list[DocumentSchema]
 
 
 @router.websocket("/{chat_id}")
@@ -65,5 +68,16 @@ async def __handle_new_message_async(websocket: WebSocket, chat_id: UUID4, event
     invocation = await Container.chat_service.invoke_chat_async(str(chat_id), event.text)
 
     async for chunk in invocation:
-        outgoing_event = OutgoingMessageChunkEvent(chunk_text=chunk.text_delta)
+        internal_fragments = (invocation.retrieved_fragments[f] for f in chunk.new_fragments if f in invocation.retrieved_fragments)
+        serializeable_fragments = [FragmentSchema(fragment_id=frag.id, text=frag.page_content, source=frag.metadata['source'],
+                                                  source_page=frag.metadata['source_page_number']) for frag in internal_fragments]
+
+        doc_ids = set(f.source for f in serializeable_fragments)
+        docs = []
+        for doc_id in doc_ids:
+            doc = Container.doc_manager.get_by_id(doc_id)
+            if doc:
+                docs.append(DocumentSchema(document_id=doc.doc_id, title=doc.title))
+
+        outgoing_event = OutgoingMessageChunkEvent(chunk_text=chunk.text_delta, new_fragments=serializeable_fragments, new_documents=docs)
         await websocket.send_json(outgoing_event.model_dump(mode="json"))

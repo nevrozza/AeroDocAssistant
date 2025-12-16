@@ -28,9 +28,9 @@ const ChatsSheet: FC<ChatsSheetProps> = ({viewModel}) => {
         <div className="chats-sheet-content">
             <Spacer height={20}/>
             {viewModel.chats.map((chat) => (
-                <SelectButton key={chat.id} text={chat.title} isSelected={chat.id === viewModel.pickedId}
+                <SelectButton key={chat.chatId} text={chat.title} isSelected={chat.chatId === viewModel.pickedId}
                               onClick={() => {
-                                  viewModel.onChatClick(chat.id)
+                                  viewModel.onChatClick(chat.chatId)
                               }}/>
             ))}
             <Spacer height={20}/>

@@ -1,11 +1,29 @@
 export interface IFragment {
     id: string;
     text: string;
-    sourceId: string;
-    sourcePage: number;
+    documentId: string;
+    documentPage: number;
 }
 
-export interface IChatMetadata {
-    id: string;
+
+export interface IMessage {
+    isMine: boolean;
+    text: string;
+    usedFragments: IFragment[];
+}
+
+export interface IDocument {
+    documentId: string;
     title: string;
+}
+
+
+export interface IChatMetadata {
+    chatId: string;
+    title: string;
+}
+
+export interface IChatContent extends IChatMetadata {
+    messages: IMessage[];
+    usedDocuments: IDocument[];
 }

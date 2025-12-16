@@ -8,11 +8,6 @@
     height: 100dvh;
 }
 
-@media (width < 1200px ) {
-    .desktop-chats-sheet {
-        display: none;
-    }
-}
 
 .chat-content {
     flex: 1;
@@ -31,22 +26,50 @@
 
     padding-bottom: var(--bottom-chatbox-padding);
 }
+
+.chat-messages-scroll-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    scrollbar-color: var(--on-background);
+    align-items: center;
+}
+
 .chat-messages-container {
     font-weight: normal;
     font-size: 15px;
     letter-spacing: 0;
     line-height: 20px;
-
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
-    overflow-x: hidden;
 
-    width: min(800px, (.8 * var(--winner)));
-    scrollbar-color: var(--on-background);
 }
 
-@media (hover: hover) { /*only for Desktop*/
+
+@media (width < 1200px ) {
+    /* small screen */
+    .desktop-chats-sheet {
+        display: none;
+    }
+
+    .chat-messages-container {
+        padding: 0 15px;
+        max-width: min(800px, calc(var(--winner)));
+    }
+}
+
+@media (width >= 1200px ) {
+    .chat-messages-container {
+        width: min(800px, (.8 * var(--winner)));
+    }
+}
+
+@media (hover: hover) {
+    /*only for Desktop*/
     .chat-page-highlight-blur {
         position: fixed;
 
@@ -60,13 +83,12 @@
         z-index: 2;
         margin-bottom: 85px;
     }
-}
 
-@media (hover: hover) {
     .chat-page {
         --bottom-chatbox-padding: 70px
     }
 }
+
 @media (hover: none) {
     .chat-page {
         --bottom-chatbox-padding: 30px

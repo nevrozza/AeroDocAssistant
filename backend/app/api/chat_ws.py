@@ -22,6 +22,7 @@ class IncomingMessageEvent(BaseModel):
 class OutgoingEventType(Enum):
     ERROR = "ERROR"
     MESSAGE_CHUNK = "MESSAGE_CHUNK"
+    MESSAGE_END = "MESSAGE_END"
 
 
 class OutgoingErrorEvent(BaseModel):
@@ -34,6 +35,11 @@ class OutgoingMessageChunkEvent(BaseModel):
     chunk_text: str
     new_fragments: list[FragmentSchema]
     new_documents: list[DocumentSchema]
+
+
+class OutgoingMessageEndEvent(BaseModel):
+    event_type: OutgoingEventType = OutgoingEventType.MESSAGE_END
+    full_text: str
 
 
 @router.websocket("/{chat_id}")
@@ -81,3 +87,6 @@ async def __handle_new_message_async(websocket: WebSocket, chat_id: UUID4, event
 
         outgoing_event = OutgoingMessageChunkEvent(chunk_text=chunk.text_delta, new_fragments=serializeable_fragments, new_documents=docs)
         await websocket.send_json(outgoing_event.model_dump(mode="json"))
+
+    end_event = OutgoingMessageEndEvent(full_text=invocation.chat_history[-1].text)
+    await websocket.send_json(end_event.model_dump(mode="json"))

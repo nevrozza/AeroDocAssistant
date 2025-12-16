@@ -4,11 +4,17 @@
 import {type FC, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import './preview-page.css'
+import ChatContent from "../chat-page/chat-content.tsx";
+import chatPageViewModel from "../chat-page/chat-page-vm.ts";
 
 const PreviewPage: FC = () => {
 
     const {documentId} = useParams<{ documentId?: string }>();
     const [page, setPage] = useState<string | null>(null);
+
+    const [chatId, setChatId] = useState<string | undefined>(undefined)
+
+
 
     useEffect(() => {
         // Извлекаем хеш из URL после загрузки компонента
@@ -23,7 +29,12 @@ const PreviewPage: FC = () => {
         <div style={{overflow: "hidden"}}>
 
             <div className="preview-chat-container">
-
+                <ChatContent chatId={chatId}  viewModel={chatPageViewModel(chatId, async (chatService) => {
+                    if (!chatId) {
+                        const chat = await chatService.createChat(documentId)
+                        setChatId(chat.chatId)
+                    }
+                })} inputRowWidth={"100%"}/>
             </div>
             <div id="scroll-wrapper">
                 <iframe
@@ -34,7 +45,8 @@ const PreviewPage: FC = () => {
                     width="100%"
                     height="100%"
                     title="PDF Viewer"
-                >Browser not compatible =(</iframe>
+                >Browser not compatible =(
+                </iframe>
             </div>
         </div>
     )

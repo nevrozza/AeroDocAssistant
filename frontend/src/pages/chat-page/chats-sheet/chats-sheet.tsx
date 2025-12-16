@@ -7,7 +7,8 @@ import {LuArrowLeft, LuPlus} from "react-icons/lu";
 import {ThemeButton} from "../../../components";
 
 export interface ChatsSheetProps {
-    viewModel: ChatSheetViewModel
+    viewModel: ChatSheetViewModel;
+
 }
 
 

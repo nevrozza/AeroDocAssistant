@@ -10,7 +10,7 @@ export const chatApi = {
         return (await apiClient.get(`/chat/${chatId}/`)).data
     },
 
-    createChat: async (): Promise<ChatMetadataDTO> => {
-        return (await apiClient.post(`/chat/create`)).data
+    createChat: async (documentId: string | undefined): Promise<ChatMetadataDTO> => {
+        return (await (documentId ? apiClient.get(`chat/?document=${documentId}`) : apiClient.post(`/chat/create`))).data
     }
 }

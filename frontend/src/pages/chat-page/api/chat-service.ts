@@ -21,9 +21,9 @@ export class ChatService {
         }
     }
 
-    async createChat(): Promise<IChatMetadata> {
+    async createChat(chatId: string | undefined): Promise<IChatMetadata> {
         try {
-            const chatMetadataDTO = await chatApi.createChat();
+            const chatMetadataDTO = await chatApi.createChat(chatId);
             return ChatMapper.metadataToDomain(chatMetadataDTO);
         } catch (error: any) {
             throw new Error(`Failed to create chat: ${error.message}`);

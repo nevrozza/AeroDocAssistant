@@ -6,7 +6,7 @@ import {useState} from "react";
 import {StringUtils} from "../../shared";
 
 export interface AIChatBoxProps {
-    inputRowWidth?: number,
+    inputRowWidth?: number | string,
     viewModel: AIChatBoxViewModel,
 }
 

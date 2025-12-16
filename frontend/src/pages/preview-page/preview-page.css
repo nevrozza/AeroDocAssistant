@@ -14,13 +14,14 @@
     right: 0;
     bottom: 0;
     top: 0;
-    background-color: var(--container-highest);
+    background-color: rgba(128, 128, 128, 0.2);
+    backdrop-filter: blur(10px);
 
     border-radius: 16px;
     border: 0 solid transparent;
     margin: 50px 15px;
 
-    width: clamp(300px, calc(.3 * 100vw), 350px);
+    width: clamp(300px, calc(.3 * 100vw), 400px);
 
 
     z-index: 1000

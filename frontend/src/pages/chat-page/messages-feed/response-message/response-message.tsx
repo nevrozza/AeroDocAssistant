@@ -14,6 +14,7 @@ export interface ResponseMessageProps {
 
 
 const ResponseMessage: FC<ResponseMessageProps> = ({message, documents}) => {
+
     const fragmentMap = message.usedFragments.reduce((map, fragment) => {
         map.set(fragment.id, fragment);
         return map;

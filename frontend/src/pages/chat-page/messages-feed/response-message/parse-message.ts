@@ -32,6 +32,7 @@ export const parseMessage = (initMessage: string, fragmentMap: Map<string, IFrag
         }
 
         const fragment = fragmentMap.get(fragmentId);
+        console.log("sda:", documentsMap)
         const document =  fragment?.documentId ? documentsMap.get(fragment?.documentId) : null;
         result.push({
             quote: quoteText.trim(),

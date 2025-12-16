@@ -30,13 +30,14 @@ const ChatPage: FC = () => {
             console.error('Failed to send message:', error);
         }
     };
-
+    console.log("xxx:", viewModel.chatContent)
     return (<div>
         <div className="chat-page">
             <div className="desktop-chats-sheet">
                 <ChatsSheet viewModel={chatsSheetViewModel}/>
             </div>
             <div className="chat-content">
+
                 {chatId ? <MessagesFeed chatBoxHeight={chatBoxHeight} messages={viewModel.chatContent?.messages}
                                         documents={viewModel.chatContent?.usedDocuments || []}/> :
                     <div>New chat</div>

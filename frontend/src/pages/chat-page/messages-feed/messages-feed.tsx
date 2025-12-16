@@ -12,6 +12,7 @@ export interface MessageFeedProps {
 }
 
 const MessagesFeed: FC<MessageFeedProps> = ({messages, documents, chatBoxHeight}) => {
+
     if (!messages) {
         return <div>loading</div>
     } else {

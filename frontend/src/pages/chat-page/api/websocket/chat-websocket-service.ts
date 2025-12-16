@@ -96,7 +96,6 @@ export class ChatWebSocketService {
             case "MESSAGE_CHUNK":
                 const chunkText: string = data.chunk_text
 
-                console.log("fragments:", data.new_fragments)
 
                 const newFragments = (data.new_fragments as FragmentDTO[]).map(ChatMapper.fragmentToDomain)
                 const newDocuments = (data.new_documents as DocumentDTO[]).map(ChatMapper.documentToDomain)
@@ -119,10 +118,11 @@ export class ChatWebSocketService {
     private handleMessageChunk(chunkText: string, newFragments: IFragment[], newDocuments: IDocument[]): void {
         if (!this.chatUpdateHandler) return;
 
-        this.chatUpdateHandler((oldData) => {
+        this.chatUpdateHandler((oldData): IChatContent => {
             if (!oldData) {
                 throw new Error("There is no chat!")
             }
+
 
             const messages = [...oldData.messages];
             const lastMessage = messages[messages.length - 1];
@@ -159,7 +159,7 @@ export class ChatWebSocketService {
             return {
                 ...oldData,
                 messages: messages,
-                documents: updatedUsedDocuments
+                usedDocuments: updatedUsedDocuments
             };
         });
     }

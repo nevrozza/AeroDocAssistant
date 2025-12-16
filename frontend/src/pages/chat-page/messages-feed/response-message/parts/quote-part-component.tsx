@@ -80,7 +80,7 @@ const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num}) => {
                         </button>
                     </div>
                     <div className="quote-part-content">
-                        <Markdown skipHtml={true}>{part.quote}</Markdown>
+                        <Markdown skipHtml={true}>{part.quote.trim()}</Markdown>
                     </div>
 
                     <div className="quote-part-file">

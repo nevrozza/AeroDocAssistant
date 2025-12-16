@@ -3,12 +3,6 @@ from langchain_core.documents import Document
 import uuid
 from pathlib import Path
 
-import sys
-import os
-sys.path.append("..")
-
-os.chdir("..")
-
 from app.core import search
 from app.core.doc_manager import DocumentManager
 from app.core.doc_loader import PDFLoader
@@ -30,6 +24,9 @@ async def main():
     loader = PDFLoader()
 
     for doc in manager.list_documents():
+        if not input(str(doc.filepath) + "? "):
+            continue
+
         print(f"Processing {doc.filepath}...")
 
         fragments = loader.load(manager.get_abs_path(doc.filepath), doc)

@@ -3,7 +3,7 @@ from pydantic import BaseModel, UUID4
 from enum import Enum
 import traceback
 
-from api.schemas import FragmentSchema, DocumentSchema
+from app.api.schemas import FragmentSchema, DocumentSchema
 from app.core.container import Container
 
 

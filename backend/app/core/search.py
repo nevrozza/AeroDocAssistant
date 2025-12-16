@@ -113,6 +113,8 @@ async def get_fragment_by_id_async(fragment_id: str) -> Document | None:
 
 
 async def get_fragments_by_id_async(ids: list[str]) -> list[Document]:
+    if not ids:
+        return []
     return await vectorstore.aget_by_ids(ids)
 
 

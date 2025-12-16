@@ -3,7 +3,7 @@ from pydantic import UUID4
 
 from app.core.container import Container
 from app.api.schemas import ChatMetadataSchema, ChatContentSchema, MessageSchema, DocumentSchema, FragmentSchema
-from app.core.chat import ChatData
+from app.core.chat import ChatData, ExtendedAIMessage
 from app.core import search
 
 
@@ -62,6 +62,17 @@ async def get_chat(chat_id: UUID4) -> ChatContentSchema:
         "human": "user",
         "ai": "assistant"
     }
-    messages = [MessageSchema(role=msg_type_map[msg.type], text=msg.text, used_fragments=[]) for msg in chat.history if msg.type in msg_type_map.keys()]
+    messages = []
+    for msg in chat.history:
+        if msg.type not in msg_type_map.keys():
+            continue
+
+        if isinstance(msg, ExtendedAIMessage):
+            fragments = msg.used_fragments
+        else:
+            fragments = []
+
+        ser = MessageSchema(role=msg_type_map[msg.type], text=msg.text, used_fragments=fragments)
+        messages.append(ser)
 
     return ChatContentSchema(chat_id=chat.chat_id, title=chat.title, messages=messages, used_fragments=serializable_fragments, used_documents=documents)

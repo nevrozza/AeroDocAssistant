@@ -31,15 +31,12 @@ export const parseMessage = (message: string, fragmentMap: Map<string, IFragment
 
         // Обработка цитаты
         const fragment = fragmentMap.get(fragmentId);
-        if (fragment) {
-            result.push({
-                quote: quoteText.trim(),
-                fragment
-            });
-        } else {
-            // Если фрагмент не найден, добавляем как текст
-            result.push({text: match[0]});
-        }
+
+        result.push({
+            quote: quoteText.trim(),
+            fragment: fragment
+        });
+
 
         lastIndex = matchIndex + match[0].length;
     }
@@ -51,6 +48,6 @@ export const parseMessage = (message: string, fragmentMap: Map<string, IFragment
             result.push({text: remainingText});
         }
     }
-
+    console.log("")
     return result.length > 0 ? result : message.trim() ? [{text: message.trim()}] : [];
 }

@@ -21,7 +21,6 @@ const ResponseMessage: FC<ResponseMessageProps> = ({message}) => {
     const parts = parseMessage(message.text, fragmentMap);
     return <div className="response-message">
         {parts.map((part, index) => {
-            // Вариант 1: Type guard функция
             switch (true) {
                 case isTextPart(part):
                     return <TextPartComponent key={index} part={part} />;

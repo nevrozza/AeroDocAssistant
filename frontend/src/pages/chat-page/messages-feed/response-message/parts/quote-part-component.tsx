@@ -10,6 +10,7 @@ interface QuotePartComponentProps {
 const QuotePartComponent: FC<QuotePartComponentProps> = ({part}) => (
     <div className="quote-part">
         <Markdown skipHtml={true}>{part.quote}</Markdown>
+        <div>{part.fragment?.id}</div>
     </div>
 );
 

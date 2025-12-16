@@ -27,3 +27,4 @@ export interface IChatContent extends IChatMetadata {
     messages: IMessage[];
     usedDocuments: IDocument[];
 }
+

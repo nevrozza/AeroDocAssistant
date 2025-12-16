@@ -1,4 +1,6 @@
-import type { IChatContent } from "../chat-models.ts";
+import type {IChatContent, IDocument, IFragment} from "../chat-models.ts";
+import type {DocumentDTO, FragmentDTO} from "../chat-dtos.ts";
+import {ChatMapper} from "../chat-mapper.ts";
 
 export type WebSocketEventHandler = (event: WebSocketEvent) => void;
 export type ChatUpdateHandler = (updateFn: (oldData: IChatContent | undefined) => IChatContent) => void;
@@ -92,11 +94,14 @@ export class ChatWebSocketService {
     private handleIncomingMessage(data: any): void {
         switch (data.event_type) {
             case "MESSAGE_CHUNK":
-                this.handleMessageChunk(data.chunk_text);
+                const chunkText: string = data.chunk_text
+                const newFragments = (data.new_fragments as FragmentDTO[]).map(ChatMapper.fragmentToDomain)
+                const newDocuments = (data.new_documents as DocumentDTO[]).map(ChatMapper.documentToDomain)
+                this.handleMessageChunk(chunkText, newFragments, newDocuments);
                 console.log("chunk:", data.chunk_text);
                 this.notifyEventHandlers({
                     type: WebSocketEventType.MESSAGE_CHUNK,
-                    payload: { chunkText: data.chunk_text }
+                    payload: { chunkText: chunkText, newFragments: newFragments, newDocuments: newDocuments },
                 });
                 break;
             case "ERROR":
@@ -108,7 +113,7 @@ export class ChatWebSocketService {
         }
     }
 
-    private handleMessageChunk(chunkText: string): void {
+    private handleMessageChunk(chunkText: string, newFragments: IFragment[], newDocuments: IDocument[]): void {
         if (!this.chatUpdateHandler) return;
 
         this.chatUpdateHandler((oldData) => {
@@ -119,22 +124,39 @@ export class ChatWebSocketService {
             const messages = [...oldData.messages];
             const lastMessage = messages[messages.length - 1];
 
+
+            const updatedUsedDocuments = Array.from(
+                new Set([
+                    ...oldData.usedDocuments,
+                    ...newDocuments
+                ])
+            )
+
             if (lastMessage && !lastMessage.isMine) {
+
+                const updatedUsedFragments = Array.from(
+                    new Set([
+                        ...lastMessage.usedFragments,
+                        ...newFragments
+                    ])
+                );
                 messages[messages.length - 1] = {
                     ...lastMessage,
-                    text: lastMessage.text + chunkText
+                    text: lastMessage.text + chunkText,
+                    usedFragments: updatedUsedFragments
                 };
             } else {
                 messages.push({
                     isMine: false,
                     text: chunkText,
-                    usedFragments: []
+                    usedFragments: newFragments
                 });
             }
 
             return {
                 ...oldData,
-                messages
+                messages: messages,
+                documents: updatedUsedDocuments
             };
         });
     }

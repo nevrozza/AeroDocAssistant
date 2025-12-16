@@ -133,7 +133,7 @@ class ChatService:
 
     async def get_document_chat_async(self, document: DocumentMetadata) -> ChatData:
         for chat in self.__chats.values():
-            if chat.document.doc_id == document.doc_id:
+            if chat.document and chat.document.doc_id == document.doc_id:
                 return chat
 
         return await self.create_chat_async(document)

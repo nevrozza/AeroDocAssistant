@@ -104,6 +104,10 @@ async def update_document_async(doc: Document) -> str:
     return doc_id
 
 
+def get_fragment_by_id(fragment_id: str) -> Document | None:
+    return vectorstore.get_by_ids([fragment_id])[0]
+
+
 def hybrid_reranker(
         dense_results: list[tuple[Document, float]],
         sparse_results: list[Document],

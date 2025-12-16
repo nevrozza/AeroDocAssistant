@@ -71,6 +71,7 @@ class ChatService:
 
     Формат ответа:
     - обычный текст
+    - старайся давать развернутые ответы
     - каждая фактическая часть ОБЯЗАНА содержать
       прямую цитату 
       и ссылку в формате {{{ [frag:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx] цитата }}}
@@ -89,6 +90,9 @@ class ChatService:
     - приводить цитаты не в указаном формате
 
     Если в документах нет ответа - НЕ ИСПОЛЬЗУЙ НЕРЕЛЕВАНТНЫЕ ЦИТАТЫ. ЕСЛИ НЕТ НИ ОДНОЙ РЕЛЕВАНТНОЙ ЦИТАТЫ, ТО СООБЩИ, ЧТО НЕТ ИНФОРМАЦИИ.
+    НЕЛЬЗЯ ВОЗВРАЩАТЬ ПУСТОЙ ОТВЕТ. ЕСЛИ НЕЧЕГО СКАЗАТЬ, ТО ЯВНО ОБОЗНАЧЬ ЭТО.
+    
+    ТЫ МОЖЕШЬ ЗАПУСКАТЬ ПОИСК КАЖДЫЙ РАЗ, ЕСЛИ НЕ УВЕРЕН В ПРОШЛОМ. ЕСЛИ ПРОШЛЫЕ СООБЩЕНИЯ БЫЛИ О ДРУГОМ, ТО ТЫ ОБЯЗАН ЗАПУСТИТЬ ПОИСК ДАЖЕ ЕСЛИ РАНЕЕ НИЧЕГО НЕ НАШЛОСЬ.
     """
 
     __CHAT_DOCUMENT_SETUP_INSTRUCTIONS = """
@@ -102,7 +106,7 @@ class ChatService:
     def __setup(self):
         llm = ChatOpenAI(
             base_url="https://llm.api.cloud.yandex.net/v1",
-            model=f"gpt://{config.FOLDER}/yandexgpt-lite",
+            model=f"gpt://{config.FOLDER}/qwen3-235b-a22b-fp8/latest",
             api_key=config.API_KEY,
         )
 
@@ -190,7 +194,6 @@ class ChatService:
         return (
                 "ПРОАНАЛИЗИРУЙ НАЙДЕННЫЕ ФРАГМЕНТЫ И ИСПОЛЬЗУЙ ТОЛЬКО ТЕ, КОТОРЫЕ СОДЕРЖАТ РЕЛЕВАНТНУЮ ИНФОРМАЦИЮ.\n"
                 "В НЕКОТОРЫХ ЦИТАТАХ МОЖЕТ НЕ БЫТЬ СМЫСЛОВОЙ НАГРУЗКИ. ИГНОРИРУЙ ИХ."
-                "ЕСЛИ РЕЛЕВАНТНОЙ ИНФОРМАЦИИ НЕ НАЙДЕНО, ТО ЗАПУСТИ ПОИСК ЕЩЕ РАЗ И НЕ ПРИВОДИ ЦИТАТУ\n"
                 "Каждое утверждение ОБЯЗАНО содержать прямую цитату.\n"
                 "ЕСЛИ ИСПОЛЬЗУЕШЬ ИНФОРМАЦИЮ ИЗ НЕСКОЛЬКИХ ФРАГМЕНТОВ, ТО ЦИТАТ ДОЛЖНО БЫТЬ НЕСКОЛЬКО. УКАЖИ КАЖДЫЙ ФРАГМЕНТ, ИЗ КОТОРОГО ВЗЯЛ ИНФОРМАЦИЮ."
                 "и ссылку в формате {{{ [frag:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx] цитата }}}, куда вместо xxxx... обязательно должен быть подставлен ID использованого фрагмента.\n"
@@ -210,6 +213,9 @@ class ChatService:
         docs = set()
         for frag_id in new_fragments:
             frag = invocation.retrieved_fragments.get(frag_id)
+            if not frag:
+                frag = search.get_fragment_by_id(frag_id)
+
             if frag:
                 source = frag.metadata["source"]
                 if source not in invocation.used_documents:
@@ -252,4 +258,4 @@ class ChatService:
                 yield self.__to_llmchunk(chunk, invocation, prev_text)
                 prev_text = chunk.text
         else:
-            yield self.__to_llmchunk(response, invocation)
+            yield self.__to_llmchunk(response, invocation, '')

@@ -1,6 +1,6 @@
 from typing import AsyncGenerator, AsyncIterable, Iterable
 from dataclasses import dataclass
-from langchain.messages import HumanMessage, AIMessage, SystemMessage, ToolMessage, AnyMessage
+from langchain.messages import HumanMessage, AIMessage, AIMessageChunk, SystemMessage, ToolMessage, AnyMessage
 from langchain_core.documents.base import Document
 from langchain_openai import ChatOpenAI
 from langchain.tools import tool, ToolRuntime
@@ -15,6 +15,8 @@ from app.core.doc_manager import DocumentMetadata
 class LLMChunk:
     text_delta: str
     tokens_delta: int
+    new_fragments: set[str]
+    new_documents: set[str]
 
 
 class AsyncChatInvocation:
@@ -23,6 +25,7 @@ class AsyncChatInvocation:
     used_fragments: set[str]
     total_tokens: int
     document: Document | None
+    used_documents: set[str]
 
     stream: AsyncIterable[LLMChunk]
 
@@ -30,6 +33,7 @@ class AsyncChatInvocation:
         self.total_tokens = 0
         self.retrieved_fragments = {}
         self.used_fragments = set()
+        self.used_documents = set()
 
     async def __aiter__(self) -> AsyncGenerator[LLMChunk, None]:
         async for chunk in self.stream:
@@ -84,7 +88,7 @@ class ChatService:
     - указывать источник без цитаты
     - приводить цитаты не в указаном формате
 
-    Если в документах нет ответа - напиши. Но снача ты обязан запустить поиск.
+    Если в документах нет ответа - НЕ ИСПОЛЬЗУЙ НЕРЕЛЕВАНТНЫЕ ЦИТАТЫ. ЕСЛИ НЕТ НИ ОДНОЙ РЕЛЕВАНТНОЙ ЦИТАТЫ, ТО СООБЩИ, ЧТО НЕТ ИНФОРМАЦИИ.
     """
 
     __CHAT_DOCUMENT_SETUP_INSTRUCTIONS = """
@@ -185,7 +189,8 @@ class ChatService:
 
         return (
                 "ПРОАНАЛИЗИРУЙ НАЙДЕННЫЕ ФРАГМЕНТЫ И ИСПОЛЬЗУЙ ТОЛЬКО ТЕ, КОТОРЫЕ СОДЕРЖАТ РЕЛЕВАНТНУЮ ИНФОРМАЦИЮ.\n"
-                "ЕСЛИ РЕЛЕВАНТНОЙ ИНФОРМАЦИИ НЕ НАЙДЕНО, ТО ЗАПУСТИ ПОИСК ЕЩЕ РАЗ\n"
+                "В НЕКОТОРЫХ ЦИТАТАХ МОЖЕТ НЕ БЫТЬ СМЫСЛОВОЙ НАГРУЗКИ. ИГНОРИРУЙ ИХ."
+                "ЕСЛИ РЕЛЕВАНТНОЙ ИНФОРМАЦИИ НЕ НАЙДЕНО, ТО ЗАПУСТИ ПОИСК ЕЩЕ РАЗ И НЕ ПРИВОДИ ЦИТАТУ\n"
                 "Каждое утверждение ОБЯЗАНО содержать прямую цитату.\n"
                 "ЕСЛИ ИСПОЛЬЗУЕШЬ ИНФОРМАЦИЮ ИЗ НЕСКОЛЬКИХ ФРАГМЕНТОВ, ТО ЦИТАТ ДОЛЖНО БЫТЬ НЕСКОЛЬКО. УКАЖИ КАЖДЫЙ ФРАГМЕНТ, ИЗ КОТОРОГО ВЗЯЛ ИНФОРМАЦИЮ."
                 "и ссылку в формате {{{ [frag:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx] цитата }}}, куда вместо xxxx... обязательно должен быть подставлен ID использованого фрагмента.\n"
@@ -198,10 +203,30 @@ class ChatService:
     def __extract_fragment_ids(text: str) -> list[str]:
         return re.findall(r'\[frag:([A-Za-z0-9._:-]+)]', text)
 
+    def __to_llmchunk(self, chunk: AIMessage, invocation: AsyncChatInvocation, prev_text: str):
+        ids = self.__extract_fragment_ids(prev_text + chunk.text)
+        new_fragments = set(ids) - invocation.used_fragments
+        invocation.used_fragments.update(ids)
+        docs = set()
+        for frag_id in new_fragments:
+            frag = invocation.retrieved_fragments.get(frag_id)
+            if frag:
+                source = frag.metadata["source"]
+                if source not in invocation.used_documents:
+                    invocation.used_documents.add(source)
+                    docs.add(source)
+
+        return LLMChunk(
+            chunk.text,
+            (chunk.usage_metadata or {}).get("total_tokens", 0),
+            new_fragments=new_fragments,
+            new_documents=docs
+        )
+
     async def __stream_llm_async(self, invocation: AsyncChatInvocation) -> AsyncGenerator[LLMChunk, None]:
         history = [*invocation.chat_history]
 
-        response = await self.__llm.ainvoke(history, config={"max_tokens": 100})
+        response = await self.__llm.ainvoke(history)
 
         if response.tool_calls:
             history.append(response)
@@ -222,13 +247,9 @@ class ChatService:
 
                     history.append(ToolMessage(content=rendered_result, tool_call_id=call["id"]))
 
-            async for chunk in self.__llm.astream(history, config={"max_tokens": 200}):
-                ids = self.__extract_fragment_ids(chunk.text)
-                invocation.used_fragments.update(ids)
-
-                yield LLMChunk(
-                    chunk.text,
-                    (chunk.usage_metadata or {}).get("total_tokens", 0),
-                )
+            prev_text = ''
+            async for chunk in self.__llm.astream(history):
+                yield self.__to_llmchunk(chunk, invocation, prev_text)
+                prev_text = chunk.text
         else:
-            yield LLMChunk(response.content, response.usage_metadata["total_tokens"])
+            yield self.__to_llmchunk(response, invocation)

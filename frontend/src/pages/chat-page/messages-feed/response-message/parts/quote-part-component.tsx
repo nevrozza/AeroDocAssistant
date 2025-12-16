@@ -1,6 +1,7 @@
 import type {IQuotePart} from "./parts.ts";
 import './part-component.css'
 import type {FC} from "react";
+import Markdown from "react-markdown";
 
 interface QuotePartComponentProps {
     part: IQuotePart
@@ -8,7 +9,7 @@ interface QuotePartComponentProps {
 
 const QuotePartComponent: FC<QuotePartComponentProps> = ({part}) => (
     <div className="quote-part">
-        {part.quote}
+        <Markdown skipHtml={true}>{part.quote}</Markdown>
     </div>
 );
 

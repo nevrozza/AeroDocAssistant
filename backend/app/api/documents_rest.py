@@ -19,6 +19,6 @@ async def download_doc_file(doc_id: UUID4) -> FileResponse:
         path,
         media_type="application/pdf",
         headers={
-                    "Content-Disposition": f'inline; filename="{doc.doc_id}.pdf"'
-                }
+            "Content-Disposition": f'inline; filename="{doc.doc_id}.pdf"'
+        }
     )

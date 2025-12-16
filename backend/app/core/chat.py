@@ -1,6 +1,6 @@
 from typing import AsyncGenerator, AsyncIterable, Iterable
 from dataclasses import dataclass
-from langchain.messages import HumanMessage, AIMessage, AIMessageChunk, SystemMessage, ToolMessage, AnyMessage
+from langchain.messages import HumanMessage, AIMessage as _AIMessage, AIMessageChunk, SystemMessage, ToolMessage, AnyMessage
 from langchain_core.documents.base import Document
 from langchain_openai import ChatOpenAI
 from langchain.tools import tool, ToolRuntime
@@ -9,6 +9,11 @@ import uuid
 
 from app.core import search, config
 from app.core.doc_manager import DocumentMetadata
+
+
+class ExtendedAIMessage(_AIMessage):
+    used_fragments: list[str]
+
 
 
 @dataclass
@@ -20,6 +25,7 @@ class LLMChunk:
 
 
 class AsyncChatInvocation:
+    chat_data: "ChatData"
     chat_history: list[AnyMessage]
     retrieved_fragments: dict[str, Document]
     used_fragments: set[str]
@@ -45,6 +51,12 @@ class ChatData:
     title: str
     history: list[AnyMessage]
     document: DocumentMetadata | None
+    used_fragments: set[str]
+    used_documents: set[str]
+
+    def __init__(self):
+        self.used_fragments = set()
+        self.used_documents = set()
 
 
 class ChatService:
@@ -148,6 +160,7 @@ class ChatService:
         invocation = AsyncChatInvocation()
         invocation.chat_history = chat_data.history
         invocation.document = chat_data.document
+        invocation.chat_data = chat_data
         invocation.stream = self.__async_invocation_generator(invocation)
 
         return invocation
@@ -160,10 +173,17 @@ class ChatService:
             invocation.total_tokens += chunk.tokens_delta
             yield chunk
 
-        invocation.chat_history.append(AIMessage("".join(c.text_delta for c in chunks)))
+        full_text = "".join(c.text_delta for c in chunks)
+        frag_ids = self.__extract_fragment_ids(full_text)
 
-        doc_ids = self.__extract_fragment_ids(invocation.chat_history[-1].text)
-        invocation.used_fragments.update(doc_ids)
+        invocation.chat_history.append(ExtendedAIMessage(content=full_text, used_fragments=frag_ids))
+
+        invocation.used_fragments.update(frag_ids)
+
+        invocation.chat_data.used_fragments.update(frag_ids)
+        frags = await search.get_fragments_by_id_async(frag_ids)
+        doc_ids = set(f.metadata["source"] for f in frags)
+        invocation.chat_data.used_documents.update(doc_ids)
 
     async def __init_new_chat_async(self, document: DocumentMetadata | None) -> list[AnyMessage]:
         result = [SystemMessage(self.__CHAT_SETUP_INSTRUCTIONS)]
@@ -214,7 +234,7 @@ class ChatService:
     def __extract_fragment_ids(text: str) -> list[str]:
         return re.findall(r'\[frag:([A-Za-z0-9._:-]+)]', text)
 
-    def __to_llmchunk(self, chunk: AIMessage, invocation: AsyncChatInvocation, prev_text: str):
+    def __to_llmchunk(self, chunk: _AIMessage, invocation: AsyncChatInvocation, prev_text: str):
         ids = self.__extract_fragment_ids(prev_text + chunk.text)
         new_fragments = set(ids) - invocation.used_fragments
         invocation.used_fragments.update(ids)

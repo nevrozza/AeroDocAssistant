@@ -108,6 +108,16 @@ def get_fragment_by_id(fragment_id: str) -> Document | None:
     return vectorstore.get_by_ids([fragment_id])[0]
 
 
+async def get_fragment_by_id_async(fragment_id: str) -> Document | None:
+    return await vectorstore.aget_by_ids([fragment_id])[0]
+
+
+async def get_fragments_by_id_async(ids: list[str]) -> list[Document]:
+    if not ids:
+        return []
+    return await vectorstore.aget_by_ids(ids)
+
+
 def hybrid_reranker(
         dense_results: list[tuple[Document, float]],
         sparse_results: list[Document],

@@ -23,7 +23,7 @@ const ChatsSheet: FC<ChatsSheetProps> = ({viewModel}) => {
             <ThemeButton/>
         </div>
         <div className="chats-sheet-create-button">
-            <OutlinedButton text="Новый чат" icon={LuPlus} width={"250px"} onClick={viewModel.createChat}/>
+            <OutlinedButton text="Новый чат" icon={LuPlus} width={"250px"} onClick={viewModel.onCreateChatClick}/>
         </div>
         <div className="chats-sheet-content">
             <Spacer height={20}/>

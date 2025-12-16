@@ -7,7 +7,7 @@ export interface ChatSheetViewModel {
     chats: IChatMetadata[];
     pickedId?: string;
     onChatClick: (id: string) => void;
-    createChat: () => void;
+    onCreateChatClick: () => void;
 }
 
 const chatSheetViewModel = (chatId?: string, chatService: ChatService = new ChatService()): ChatSheetViewModel => {
@@ -23,9 +23,8 @@ const chatSheetViewModel = (chatId?: string, chatService: ChatService = new Chat
         navigateToChat(id)
     }
 
-    const createChat = (): void => {
-        const newChatId = 'new'
-        navigateToChat(newChatId)
+    const onCreateChatClick = (): void => {
+        navigateToChat('')
     }
 
     const navigateToChat = (id: string): void => {
@@ -36,7 +35,7 @@ const chatSheetViewModel = (chatId?: string, chatService: ChatService = new Chat
         chats: useChats.data ? useChats.data : [],
         pickedId: chatId,
         onChatClick: onChatClick,
-        createChat: createChat
+        onCreateChatClick: onCreateChatClick
     }
 }
 export default chatSheetViewModel

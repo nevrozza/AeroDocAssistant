@@ -14,6 +14,7 @@ interface IconButtonProps {
     onClick?: (event?: React.MouseEvent) => void,
     icon: Icon;
     enabled?: boolean;
+    border?: string
 }
 
 const IconButton: FC<IconButtonProps>
@@ -26,11 +27,14 @@ const IconButton: FC<IconButtonProps>
            onClick = () => null,
            icon: Icon,
            enabled = true,
+           border = "0 solid transparent"
        }) => {
 
     return <button className={enabled ? "icon-button-container hoverable clickable" : "icon-button-container"}
-                   style={{width: radius, height: radius, backgroundColor: containerColor, color: iconColor,
-                   transition: "var(--clickable-transition), color 600ms"}}
+                   style={{
+                       width: radius, height: radius, backgroundColor: containerColor, color: iconColor,
+                       transition: "var(--clickable-transition), color 600ms", border: border
+                   }}
                    onClick={enabled ? onClick : undefined}
     >
         <Icon

@@ -1,0 +1,10 @@
+.preview-iframe {
+    height: var(--hinner);
+    width: var(--winner);
+}
+
+#scroll-wrapper {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}

@@ -3,8 +3,8 @@ import './text-part.css'
 import './quote-part.css'
 import type {FC} from "react";
 import Markdown from "react-markdown";
-import { useState, useRef } from "react";
-import {IconButton} from "../../../../../widgets";
+import {useState, useRef} from "react";
+import {colors, IconButton} from "../../../../../widgets";
 import {LuFile} from "react-icons/lu";
 
 interface QuotePartComponentProps {
@@ -15,6 +15,7 @@ interface QuotePartComponentProps {
 const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num}) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+
 
     const expandedRef = useRef<HTMLDivElement>(null);
     const collapsedRef = useRef<HTMLButtonElement>(null);
@@ -83,9 +84,13 @@ const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num}) => {
                         <Markdown skipHtml={true}>{part.quote.trim()}</Markdown>
                     </div>
 
-                    <div className="quote-part-file">
-                        <IconButton icon={LuFile}/>
-                    </div>
+                    {part.fragment != null ? <div className="quote-part-file">
+                        <IconButton icon={LuFile} containerColor={colors.primaryContainer}
+                                    iconColor={colors.onPrimaryContainer} iconSize={24}
+                                    border="1px dashed var(--primary)" onClick={() => {
+                            window.open(`/documents/${part.fragment!!.documentId}#page=${part.fragment!!.documentPage}`, '_blank')?.focus()
+                        }}/>
+                    </div> : <></>}
                 </div>
             )}
         </div>

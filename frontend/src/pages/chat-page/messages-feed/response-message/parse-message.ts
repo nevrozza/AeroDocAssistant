@@ -10,11 +10,6 @@ export const parseMessage = (initMessage: string, fragmentMap: Map<string, IFrag
     // Улучшенная регулярка с именованными группами
     const quoteRegex = /\{\{\{\s*\[frag:(?<fragmentId>[a-f0-9\-]+)\]\s*(?<quoteText>.*?)\s*\}\}\}/gs;
 
-    // const fragmentMap = fragments.reduce((map, fragment) => {
-    //     map.set(fragment.id, fragment);
-    //     return map;
-    // }, new Map<string, IFragment>());
-
     let lastIndex = 0;
 
     const matches = message.matchAll(quoteRegex);

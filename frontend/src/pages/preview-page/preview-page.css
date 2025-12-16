@@ -8,3 +8,20 @@
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
+.preview-chat-container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: var(--container-highest);
+
+    border-radius: 16px;
+    border: 0 solid transparent;
+    margin: 50px 15px;
+
+    width: clamp(300px, calc(.3 * 100vw), 350px);
+
+
+    z-index: 1000
+}

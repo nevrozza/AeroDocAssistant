@@ -3,8 +3,6 @@
 
 import {type FC, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {IconButton} from "../../widgets";
-import {LuFile} from "react-icons/lu";
 import './preview-page.css'
 
 const PreviewPage: FC = () => {
@@ -22,10 +20,10 @@ const PreviewPage: FC = () => {
     }, []);
     const link = `http://localhost:8000/document/${documentId}#page=${page}`
     return (
-        <div>
+        <div style={{overflow: "hidden"}}>
 
-            <div style={{position: "absolute", zIndex: 1000}}>
-                <IconButton icon={LuFile}></IconButton>
+            <div className="preview-chat-container">
+
             </div>
             <div id="scroll-wrapper">
                 <iframe
@@ -36,7 +34,7 @@ const PreviewPage: FC = () => {
                     width="100%"
                     height="100%"
                     title="PDF Viewer"
-                >Browser not compatible</iframe>
+                >Browser not compatible =(</iframe>
             </div>
         </div>
     )

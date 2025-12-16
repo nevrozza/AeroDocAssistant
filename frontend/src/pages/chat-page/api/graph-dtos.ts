@@ -1,9 +1,9 @@
-export interface GraphNode {
+export interface Node {
   id: string;
   label: string;
 }
 
-export interface GraphEdge {
+export interface Edge {
   source: string;
   target: string;
   id: string;
@@ -11,8 +11,8 @@ export interface GraphEdge {
 }
 
 export interface GraphData {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
+  nodes: Node[];
+  edges: Edge[];
   // metadata?: {
   //   name?: string;
   //   description?: string;

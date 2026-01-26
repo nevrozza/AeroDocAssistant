@@ -1,0 +1,185 @@
+.quote-part {
+    margin: 2px 0;
+    position: relative;
+}
+
+.quote-part-file {
+    transform: translate(10px, -30px);
+    position: absolute;
+    right: 0;
+}
+
+.quote-part-collapsed {
+    position: relative;
+    display: flex;
+
+    justify-items: start;
+    justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px dashed var(--outline);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    overflow: hidden;
+    z-index: 1;
+
+    background-color: transparent;
+}
+
+.quote-part-collapsed.hiding {
+    transform-origin: top center;
+    animation: collapseToExpand 0.5s ease-out forwards;
+}
+
+@keyframes collapseToExpand {
+    0% {
+        opacity: 1;
+        min-height: 0;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+        min-height: 100px;
+        visibility: hidden;
+    }
+}
+
+.quote-part-expanded {
+    border: 1px dashed var(--outline);
+    border-radius: 16px;
+    animation: expandAppear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    transform-origin: top center;
+    display: block;
+}
+
+@keyframes expandAppear {
+    0% {
+        opacity: 0;
+        min-height: 100px;
+        filter: blur(4px);
+    }
+    50% {
+        opacity: 0.5;
+        min-height: 0;
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Анимация исчезновения развернутого состояния */
+.quote-part-expanded.hiding {
+    animation: expandToCollapse 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes expandToCollapse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        max-height: 500px;
+    }
+    100% {
+        opacity: 0;
+        transform: scaleY(0);
+        max-height: 0;
+        visibility: hidden;
+    }
+}
+
+.quote-part-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px dashed var(--outline);
+    animation: slideDownHeader 0.4s 0.2s ease-out both;
+}
+
+@keyframes slideDownHeader {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.quote-part-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--outline);
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation: rotateIn 0.5s 0.3s ease-out both;
+}
+
+@keyframes rotateIn {
+    0% {
+        opacity: 0;
+        transform: rotate(-90deg) scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(0) scale(1);
+    }
+}
+
+.quote-part-close:hover {
+    transform: rotate(90deg) scale(1.1);
+    border-color: var(--primary);
+}
+
+.quote-part-close:active {
+    transform: rotate(90deg) scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.quote-part-content {
+    padding: 0 16px;
+    animation: contentReveal 0.5s 0.4s ease-out both;
+}
+
+@keyframes contentReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Плавное появление текста внутри контента */
+.quote-part-content * {
+    animation: textReveal 0.8s 0.5s ease-out both;
+}
+
+@keyframes textReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

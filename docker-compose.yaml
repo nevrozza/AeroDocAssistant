@@ -13,8 +13,9 @@ services:
     volumes:
       - ./backend/app:/airdoc/app
       - ./backend/data:/airdoc/data
+      - ./backend/chroma:/airdoc/chroma
     restart: unless-stopped
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     entrypoint: ["python", "-m", "fastapi", "run", "app/main.py"]
-#    command: ["--reload"]
+    command: ["--reload"]

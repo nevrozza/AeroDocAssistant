@@ -16,6 +16,7 @@ dependencies = [
     "rank-bm25>=0.2.2",
     "scikit-learn>=1.8.0",
     "unstructured[pdf]>=0.18.21",
+    "websockets>=15.0.1",
     "yandex-cloud-ml-sdk>=0.17.1",
     "yandexcloud>=0.371.0",
 ]

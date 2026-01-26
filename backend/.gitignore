@@ -84,3 +84,6 @@ tmp/
 # Email credentials
 email_config.json
 smtp_config.py
+app/core/offline_graph_builder.py
+.env
+data/

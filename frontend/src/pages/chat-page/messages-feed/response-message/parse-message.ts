@@ -1,17 +1,14 @@
 import type {IMessagePart} from "./parts/parts.ts";
-import type {IFragment} from "../../api/chat-models.ts";
+import type {IDocument, IFragment} from "../../api/chat-models.ts";
 
 
-export const parseMessage = (message: string, fragmentMap: Map<string, IFragment>): IMessagePart[] => {
+export const parseMessage = (initMessage: string, fragmentMap: Map<string, IFragment>, documentsMap: Map<string, IDocument>): IMessagePart[] => {
+
+    const message = initMessage.replace(/}}}./g, "}}}")
     const result: IMessagePart[] = [];
 
     // Улучшенная регулярка с именованными группами
     const quoteRegex = /\{\{\{\s*\[frag:(?<fragmentId>[a-f0-9\-]+)\]\s*(?<quoteText>.*?)\s*\}\}\}/gs;
-
-    // const fragmentMap = fragments.reduce((map, fragment) => {
-    //     map.set(fragment.id, fragment);
-    //     return map;
-    // }, new Map<string, IFragment>());
 
     let lastIndex = 0;
 
@@ -29,17 +26,15 @@ export const parseMessage = (message: string, fragmentMap: Map<string, IFragment
             }
         }
 
-        // Обработка цитаты
         const fragment = fragmentMap.get(fragmentId);
-        if (fragment) {
-            result.push({
-                quote: quoteText.trim(),
-                fragment
-            });
-        } else {
-            // Если фрагмент не найден, добавляем как текст
-            result.push({text: match[0]});
-        }
+        console.log("sda:", documentsMap)
+        const document =  fragment?.documentId ? documentsMap.get(fragment?.documentId) : null;
+        result.push({
+            quote: quoteText.trim(),
+            fragment: fragment,
+            documentTitle: document?.title
+        });
+
 
         lastIndex = matchIndex + match[0].length;
     }
@@ -51,6 +46,6 @@ export const parseMessage = (message: string, fragmentMap: Map<string, IFragment
             result.push({text: remainingText});
         }
     }
-
+    console.log("")
     return result.length > 0 ? result : message.trim() ? [{text: message.trim()}] : [];
 }

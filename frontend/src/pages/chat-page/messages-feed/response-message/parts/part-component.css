@@ -1,9 +1,0 @@
-.quote-part {
-    border: 1px dashed var(--outline);
-    border-radius: 16px;
-    padding: 5px 10px;
-}
-
-.text-part {
-    padding: 0 11px;
-}

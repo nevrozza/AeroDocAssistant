@@ -7,13 +7,13 @@ export interface FragmentDTO {
     fragment_id: string;
     text: string;
     source: string;
-    source_page: string;
+    source_page: number;
 }
 
 export interface MessageDTO {
     role: string;
     text: string;
-    used_fragments: FragmentDTO[];
+    used_fragments: string[];
 }
 
 export interface ChatMetadataDTO {
@@ -21,7 +21,7 @@ export interface ChatMetadataDTO {
     title: string;
 }
 
-export interface ChatContentDTO {
+export interface ChatContentDTO extends ChatMetadataDTO {
     messages: MessageDTO[];
     used_fragments: FragmentDTO[];
     used_documents: DocumentDTO[];

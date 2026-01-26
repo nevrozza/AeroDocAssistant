@@ -4,4 +4,6 @@
     padding: 10px;
 
     align-self: end;
+    width: fit-content;
+    max-width: 70%;
 }

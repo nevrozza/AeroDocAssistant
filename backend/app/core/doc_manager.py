@@ -83,10 +83,18 @@ class DocumentManager:
         for path in files:
             rel_path = path.relative_to(self.__directory)
 
-            doc = DocumentMetadata(doc_id=uuid4(), filepath=rel_path)
+            doc = DocumentMetadata(doc_id=uuid4(), filepath=rel_path, title="")
             self.__documents[str(doc.doc_id)] = doc
 
         print(f"Indexed {len(self.__documents)} documents")
+
+        self.__save_index()
+
+    def reindex_file(self, path: Path):
+        rel_path = path.relative_to(self.__directory)
+
+        doc = DocumentMetadata(doc_id=uuid4(), filepath=rel_path, title="")
+        self.__documents[str(doc.doc_id)] = doc
 
         self.__save_index()
 

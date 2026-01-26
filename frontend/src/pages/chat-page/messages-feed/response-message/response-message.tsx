@@ -4,40 +4,38 @@ import {isQuotePart, isTextPart} from "./parts/parts.ts";
 import TextPartComponent from "./parts/text-part-component.tsx";
 import QuotePartComponent from "./parts/quote-part-component.tsx";
 import './response-message.css'
-import type {IFragment} from "../../api/chat-models.ts";
+import type {IDocument, IFragment, IMessage} from "../../api/chat-models.ts";
 
 
 export interface ResponseMessageProps {
-    message?: string;
+    message: IMessage;
+    documents: IDocument[];
+    showFileButton: boolean
 }
 
-const exampleMessage = `В авиастроении используются композитные материалы, в основном углепластик.
-{{{[frag:e0c5ca62-7aa4-4b95-983e-5bc067d545a1] Планер самолета Boeing 787 более чем на 50% по весу состоит из композитных материалов, в основном углепластика}}}`;
 
-const exampleFragments: IFragment[] = [
-    {
-        id: "e0c5ca62-7aa4-4b95-983e-5bc067d545a1",
-        text: "Планер самолета Boeing 787 более чем на 50% по весу состоит из композитных материалов, в основном  углепластика",
-        sourceId: "source-123",
-        sourcePage: 1
-    }
-];
+const ResponseMessage: FC<ResponseMessageProps> = ({message, documents, showFileButton}) => {
 
-const ResponseMessage: FC<ResponseMessageProps> = ({message}) => {
-    const fragmentMap = exampleFragments.reduce((map, fragment) => {
+    const fragmentMap = message.usedFragments.reduce((map, fragment) => {
         map.set(fragment.id, fragment);
         return map;
     }, new Map<string, IFragment>());
 
-    const parts = parseMessage(exampleMessage, fragmentMap);
+    const documentsMap = documents.reduce((map, document) => {
+        map.set(document.documentId, document);
+        return map;
+    }, new Map<string, IDocument>());
+
+    const parts = parseMessage(message.text, fragmentMap, documentsMap);
+    let quoteCount = 0;
     return <div className="response-message">
         {parts.map((part, index) => {
-            // Вариант 1: Type guard функция
             switch (true) {
                 case isTextPart(part):
                     return <TextPartComponent key={index} part={part} />;
                 case isQuotePart(part):
-                    return <QuotePartComponent key={index} part={part}/>;
+                    quoteCount++
+                    return <QuotePartComponent showFileButton={showFileButton} key ={index} part={part} num={quoteCount}/>;
                 default:
                     console.error('Неизвестный тип части');
                     return null;

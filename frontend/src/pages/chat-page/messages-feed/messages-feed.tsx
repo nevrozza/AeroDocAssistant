@@ -8,16 +8,18 @@ import React from "react";
 export interface MessageFeedProps {
     messages: IMessage[] | undefined;
     documents: IDocument[];
-    chatBoxHeight: number
+    chatBoxHeight: number;
+    widthStyle: string;
+    bottomPadding: number;
 }
 
-const MessagesFeed: FC<MessageFeedProps> = ({messages, documents, chatBoxHeight}) => {
+const MessagesFeed: FC<MessageFeedProps> = ({messages, documents, chatBoxHeight, widthStyle, bottomPadding}) => {
 
     if (!messages) {
         return <div>loading</div>
     } else {
         return (<div className="chat-messages-scroll-wrapper">
-            <MessageContainer key={"MessageContainer"} chatBoxHeight={chatBoxHeight}>
+            <MessageContainer widthStyle={widthStyle} key={"MessageContainer"} chatBoxHeight={chatBoxHeight}>
                 {
                     messages.map((message, index) => {
                         if (message.isMine) {
@@ -29,12 +31,15 @@ const MessagesFeed: FC<MessageFeedProps> = ({messages, documents, chatBoxHeight}
                             )
                         } else {
                             return <React.Fragment key={index}>
-                                <ResponseMessage key={index} message={message} documents={documents}/>
+                                <ResponseMessage showFileButton={widthStyle == "chat-messages-container-width"} key={index} message={message} documents={documents}/>
                                 <Spacer key={"Spacer"+index} height={20}/>
                             </React.Fragment>
                         }
                     })
+
+
                 }
+                <Spacer height={bottomPadding}/>
             </MessageContainer>
         </div>)
     }

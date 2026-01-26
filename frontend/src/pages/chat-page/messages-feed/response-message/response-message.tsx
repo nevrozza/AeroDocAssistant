@@ -10,10 +10,11 @@ import type {IDocument, IFragment, IMessage} from "../../api/chat-models.ts";
 export interface ResponseMessageProps {
     message: IMessage;
     documents: IDocument[];
+    showFileButton: boolean
 }
 
 
-const ResponseMessage: FC<ResponseMessageProps> = ({message, documents}) => {
+const ResponseMessage: FC<ResponseMessageProps> = ({message, documents, showFileButton}) => {
 
     const fragmentMap = message.usedFragments.reduce((map, fragment) => {
         map.set(fragment.id, fragment);
@@ -34,7 +35,7 @@ const ResponseMessage: FC<ResponseMessageProps> = ({message, documents}) => {
                     return <TextPartComponent key={index} part={part} />;
                 case isQuotePart(part):
                     quoteCount++
-                    return <QuotePartComponent key={index} part={part} num={quoteCount}/>;
+                    return <QuotePartComponent showFileButton={showFileButton} key ={index} part={part} num={quoteCount}/>;
                 default:
                     console.error('Неизвестный тип части');
                     return null;

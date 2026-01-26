@@ -10,10 +10,13 @@ export interface ChatContentProps {
     chatId: string | undefined;
     viewModel: ChatPageViewModel;
     inputRowWidth: number | string;
+    isOverridenMessagesWidth: boolean;
+    chatContentStyle: string;
+    bottomPadding: number;
 }
 
 
-const ChatContent: FC<ChatContentProps> = ({chatId, viewModel, inputRowWidth}) => {
+const ChatContent: FC<ChatContentProps> = ({chatId, viewModel, inputRowWidth, isOverridenMessagesWidth, chatContentStyle, bottomPadding}) => {
     const chatBoxRef = useRef<HTMLDivElement>(null);
     const chatBoxHeight = getChatboxHeight(chatBoxRef);
 
@@ -25,9 +28,9 @@ const ChatContent: FC<ChatContentProps> = ({chatId, viewModel, inputRowWidth}) =
         }
     };
 
-    return <div className="chat-content">
+    return <div className={chatContentStyle}>
 
-        {chatId ? <MessagesFeed chatBoxHeight={chatBoxHeight} messages={viewModel.chatContent?.messages}
+        {chatId ? <MessagesFeed bottomPadding={bottomPadding} widthStyle={ isOverridenMessagesWidth ? "chat-messages-container-width-custom" : "chat-messages-container-width" } chatBoxHeight={chatBoxHeight} messages={viewModel.chatContent?.messages}
                                 documents={viewModel.chatContent?.usedDocuments || []}/> :
             <div>New chat</div>
         }

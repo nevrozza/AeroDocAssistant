@@ -46,7 +46,7 @@ const ChatPage: FC = () => {
             <div className="desktop-chats-sheet">
                 <ChatsSheet viewModel={chatsSheetViewModel}/>
             </div>
-            <ChatContent chatId={chatId} viewModel={viewModel}
+            <ChatContent bottomPadding={0} chatContentStyle={"chat-content"} isOverridenMessagesWidth={false} chatId={chatId} viewModel={viewModel}
                          inputRowWidth={Math.min(useResize(parent).width * .7, 700)}/>
         </div>
 

@@ -56,14 +56,14 @@
         display: none;
     }
 
-    .chat-messages-container {
+    .chat-messages-container-width {
         width: calc(var(--winner) - 15px);
         max-width: min(800px, calc(var(--winner)));
     }
 }
 
 @media (width >= 1200px ) {
-    .chat-messages-container {
+    .chat-messages-container-width {
         width: min(800px, (.8 * var(--winner)));
     }
 }

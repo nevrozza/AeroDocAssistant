@@ -10,9 +10,10 @@ import {LuFile} from "react-icons/lu";
 interface QuotePartComponentProps {
     part: IQuotePart
     num: number
+    showFileButton: boolean
 }
 
-const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num}) => {
+const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num, showFileButton}) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
@@ -84,13 +85,13 @@ const QuotePartComponent: FC<QuotePartComponentProps> = ({part, num}) => {
                         <Markdown skipHtml={true}>{part.quote.trim()}</Markdown>
                     </div>
 
-                    {part.fragment != null ? <div className="quote-part-file">
+                    {showFileButton && part.fragment && <div className="quote-part-file">
                         <IconButton icon={LuFile} containerColor={colors.primaryContainer}
                                     iconColor={colors.onPrimaryContainer} iconSize={24}
                                     border="1px dashed var(--primary)" onClick={() => {
                             window.open(`/documents/${part.fragment!!.documentId}#page=${part.fragment!!.documentPage}`, '_blank')?.focus()
                         }}/>
-                    </div> : <></>}
+                    </div>}
                 </div>
             )}
         </div>
